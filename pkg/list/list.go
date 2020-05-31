@@ -2,20 +2,28 @@
 package list
 
 import (
+	"bytes"
 	"fmt"
 	"os"
 	"text/template"
 
+	"github.com/shric/go-trpc/pkg/torrent"
+
 	"github.com/hekmon/transmissionrpc"
 )
+
+func format(pointerTorrent *transmissionrpc.Torrent) (string) {
+	result := torrent.NewFrom(pointerTorrent)
+	format := `{{printf "%4v" .ID}} {{.Error}} {{printf "%5.1f" .Percent}}% {{printf "%11s" .Size}} {{.Name}}`
+	var tpl bytes.Buffer
+	tmpl := template.Must(template.New("list").Parse(format))
+	tmpl.Execute(&tpl, result)
+	return tpl.String()
+}
 
 // List provides a list of all or selected torrents.
 func List(client *transmissionrpc.Client) {
 
-	format := `{{printf "%-4v" (Derefint64 .ID)}}{{.Name}}`
-	tmpl := template.Must(template.New("list").Funcs(template.FuncMap{
-		"Derefint64": func(i *int64) int64 { return *i },
-	}).Parse(format))
 
 	torrents, err := client.TorrentGet([]string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
@@ -29,8 +37,8 @@ func List(client *transmissionrpc.Client) {
 		fmt.Fprintln(os.Stderr, err)
 	} else {
 		for _, torrent := range torrents {
-			tmpl.Execute(os.Stdout, *torrent)
-			fmt.Println()
+			formattedTorrent := format(torrent)
+			fmt.Println(formattedTorrent)
 		}
 	}
 
