@@ -14,7 +14,7 @@ import (
 
 func format(pointerTorrent *transmissionrpc.Torrent) (string) {
 	result := torrent.NewFrom(pointerTorrent)
-	format := `{{printf "%4v" .ID}} {{.Error}} {{printf "%5.1f" .Percent}}% {{printf "%11s" .Size}} {{.Name}}`
+	format := `{{printf "%4v" .ID}} {{.Error}} {{printf "%5.1f" .Percent}}% {{printf "%11s" .Size}} {{printf "%8s" .Eta}} {{.Name}}`
 	var tpl bytes.Buffer
 	tmpl := template.Must(template.New("list").Parse(format))
 	tmpl.Execute(&tpl, result)

@@ -1,9 +1,41 @@
+// Package torrent provides a useful accessors for human readable output.
 package torrent
 
 import (
+	"fmt"
+
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
 )
+
+type unitMap struct {
+	Amount float64
+	Name   string
+}
+
+func (torrent Torrent) eta() string {
+	if *torrent.original.LeftUntilDone == 0 {
+		return "Done"
+	}
+	if *torrent.original.Eta == -1 {
+		return "Unknown"
+	}
+	units := []unitMap{
+		{86400 * 365.25, "years"},
+		{86400 * 365.25 / 12, "months"},
+		{86400 * 7, "weeks"},
+		{86400, "days"},
+		{3600, "hours"},
+		{60, "mins"},
+	}
+	eta := float64(*torrent.original.Eta)
+	for _, u := range units {
+		if eta > u.Amount*3 {
+			return fmt.Sprintf("%d %s", int(eta/u.Amount), u.Name)
+		}
+	}
+	return fmt.Sprintf("%d secs", int64(eta))
+}
 
 func (torrent Torrent) have() int64 {
 	return int64(torrent.original.SizeWhenDone.Byte()) - *torrent.original.LeftUntilDone
@@ -31,18 +63,18 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent) (torrent *Torrent)
 		torrent.Error = "*"
 	}
 	torrent.Percent = torrent.progress()
-
-	return torrent
+	torrent.Eta = torrent.eta()
+	return
 }
 
 // Torrent contains all the fields of transmissionrpc.Torrent but with non-pointer values
 // useful for formatted output.
 type Torrent struct {
-	// These fields have been overridden so far.
 	ID       int64
 	Error    string
 	Name     string
 	Percent  float64
 	Size     cunits.Bits
+	Eta      string
 	original *transmissionrpc.Torrent
 }
