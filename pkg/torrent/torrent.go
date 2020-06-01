@@ -3,6 +3,10 @@ package torrent
 
 import (
 	"fmt"
+	"math"
+	"strings"
+
+	"github.com/shric/go-trpc/pkg/config"
 
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
@@ -51,8 +55,39 @@ func (torrent Torrent) progress() float64 {
 	return 100.0 * float64(torrent.have()) / float64(torrent.original.SizeWhenDone.Byte())
 }
 
+func (torrent Torrent) ratio() float64 {
+	if torrent.original.SizeWhenDone == nil {
+		if *torrent.original.UploadedEver != 0 {
+			return math.Inf(1)
+		}
+		return math.NaN()
+	}
+	return float64(*torrent.original.UploadedEver) / float64(torrent.original.SizeWhenDone.Byte())
+}
+
+func (torrent Torrent) priority() string {
+	priorities := []string{"low", "normal", "high"}
+	// We add one because
+	// https://github.com/transmission/transmission/blob/master/libtransmission/transmission.h
+	//     TR_PRI_LOW = -1,
+	//     TR_PRI_NORMAL = 0, /* since NORMAL is 0, memset initializes nicely */
+	//     TR_PRI_HIGH = 1
+	return priorities[*torrent.original.BandwidthPriority+1]
+}
+
+func (torrent Torrent) trackershortname(conf *config.Config) string {
+	for _, url := range torrent.original.Trackers {
+		for match, shortname := range conf.Trackernames {
+			if strings.Contains(url.Announce, match) {
+				return shortname
+			}
+		}
+	}
+	return "UNK"
+}
+
 // NewFrom takes a transmissionrpc Torrent and provides useful human readable fields
-func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent) (torrent *Torrent) {
+func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Config) (torrent *Torrent) {
 	torrent = &Torrent{}
 	torrent.original = transmissionrpcTorrent
 	torrent.ID = *torrent.original.ID
@@ -64,17 +99,27 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent) (torrent *Torrent)
 	}
 	torrent.Percent = torrent.progress()
 	torrent.Eta = torrent.eta()
+	torrent.Up = float64(*torrent.original.RateUpload) / 1024.0
+	torrent.Down = float64(*torrent.original.RateDownload) / 1024.0
+	torrent.Ratio = torrent.ratio()
+	torrent.Priority = torrent.priority()
+	torrent.Trackershortname = torrent.trackershortname(conf)
 	return
 }
 
 // Torrent contains all the fields of transmissionrpc.Torrent but with non-pointer values
 // useful for formatted output.
 type Torrent struct {
-	ID       int64
-	Error    string
-	Name     string
-	Percent  float64
-	Size     cunits.Bits
-	Eta      string
-	original *transmissionrpc.Torrent
+	ID               int64
+	Error            string
+	Name             string
+	Percent          float64
+	Size             cunits.Bits
+	Eta              string
+	Up               float64
+	Down             float64
+	Ratio            float64
+	Priority         string
+	Trackershortname string
+	original         *transmissionrpc.Torrent
 }

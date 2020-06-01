@@ -6,6 +6,7 @@ import (
 
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
+	"github.com/shric/go-trpc/pkg/config"
 )
 
 func MakeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64,
@@ -13,16 +14,29 @@ func MakeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64,
 	ID := int64(1)
 	Error := int64(0)
 	Name := "Torrent 1"
-	trpcTorrent := &transmissionrpc.Torrent{
-		SizeWhenDone:    &SizeWhenDone,
-		ID:              &ID,
-		Name:            &Name,
-		Error:           &Error,
-		Eta:             &Eta,
-		RecheckProgress: &RecheckProgress,
-		LeftUntilDone:   &LeftUntilDone,
+	RateUpload := int64(0)
+	RateDownload := int64(0)
+	UploadedEver := int64(0)
+	BandwidthPriority := int64(0)
+	trpcTorrent := transmissionrpc.Torrent{
+		SizeWhenDone:      &SizeWhenDone,
+		ID:                &ID,
+		Name:              &Name,
+		Error:             &Error,
+		Eta:               &Eta,
+		RateUpload:        &RateUpload,
+		RateDownload:      &RateDownload,
+		RecheckProgress:   &RecheckProgress,
+		LeftUntilDone:     &LeftUntilDone,
+		UploadedEver:      &UploadedEver,
+		BandwidthPriority: &BandwidthPriority,
 	}
-	torrent = NewFrom(trpcTorrent)
+	conf := config.Config{
+		Trackernames: map[string]string{
+			"foo": "foo-tracker",
+		},
+	}
+	torrent = NewFrom(&trpcTorrent, &conf)
 	return
 }
 

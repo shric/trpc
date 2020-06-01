@@ -6,6 +6,7 @@ github.com/hekmon/cunits/v2 v2.0.2 h1:qnZMfVxBiTgtAXVSMLKxzV1nihS6KzdjDHgh+nS4Rg
 github.com/hekmon/cunits/v2 v2.0.2/go.mod h1:9r1TycXYXaTmEWlAIfFV8JT+Xo59U96yUJAYHxzii2M=
 github.com/hekmon/transmissionrpc v1.0.0 h1:5FPht3EfRh9T3w5M1MPLFh47qRXc7N10XI5Wu5+XOCI=
 github.com/hekmon/transmissionrpc v1.0.0/go.mod h1:qkwhsyD/MQSlWvOE1AC92xajwEveAuGsOvTuOBZEuHc=
+github.com/pelletier/go-toml v1.8.0 h1:Keo9qb7iRJs2voHvunFtuuYFsbWeOBh8/P9v/kVMFtw=
 github.com/pelletier/go-toml v1.8.0/go.mod h1:D6yutnOGMveHEPV7VQOuvI/gXY61bv+9bAOTRnLElKs=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.3.0/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
