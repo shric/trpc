@@ -22,7 +22,7 @@ func format(torrent *torrent.Torrent, conf *config.Config) string {
 }
 
 // List provides a list of all or selected torrents
-func List(client *transmissionrpc.Client) {
+func List(client *transmissionrpc.Client, _ []string) {
 	torrents, err := client.TorrentGet([]string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
