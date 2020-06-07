@@ -18,6 +18,7 @@ func MakeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64,
 	RateDownload := int64(0)
 	UploadedEver := int64(0)
 	BandwidthPriority := int64(0)
+	Status := transmissionrpc.TorrentStatus(0)
 	trpcTorrent := transmissionrpc.Torrent{
 		SizeWhenDone:      &SizeWhenDone,
 		ID:                &ID,
@@ -28,6 +29,7 @@ func MakeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64,
 		RateDownload:      &RateDownload,
 		RecheckProgress:   &RecheckProgress,
 		LeftUntilDone:     &LeftUntilDone,
+		Status:            &Status,
 		UploadedEver:      &UploadedEver,
 		BandwidthPriority: &BandwidthPriority,
 	}

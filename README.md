@@ -14,6 +14,7 @@ This project was only started recently and therefore is very barebones.
 
 * List command
   * [x] Basic list functionality
+  * [x] List incomplete filter
 
 * Add command
   * [x] Add torrents by filename or URL

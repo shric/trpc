@@ -7,8 +7,13 @@ import (
 	"github.com/hekmon/transmissionrpc"
 )
 
+// Options is all the command line options for the add command
+type Options struct {
+	Paused bool `short:"p" long:"paused" description:"add torrent paused"`
+}
+
 // Add adds a new torrent by URL or file
-func Add(client *transmissionrpc.Client, args []string) {
+func Add(client *transmissionrpc.Client, opts Options, args []string) {
 	for _, arg := range args {
 		var torrent *transmissionrpc.Torrent
 

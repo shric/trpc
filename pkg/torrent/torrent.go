@@ -93,6 +93,8 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Confi
 	torrent.ID = *torrent.original.ID
 	torrent.Name = *torrent.original.Name
 	torrent.Size = *torrent.original.SizeWhenDone
+	torrent.Status = *torrent.original.Status
+	torrent.LeftUntilDone = *torrent.original.LeftUntilDone
 	torrent.Error = " "
 	if *torrent.original.Error != 0 {
 		torrent.Error = "*"
@@ -121,5 +123,7 @@ type Torrent struct {
 	Ratio            float64
 	Priority         string
 	Trackershortname string
+	LeftUntilDone    int64
+	Status           transmissionrpc.TorrentStatus
 	original         *transmissionrpc.Torrent
 }
