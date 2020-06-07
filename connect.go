@@ -52,7 +52,7 @@ func Connect() *transmissionrpc.Client {
 		Port:        port,
 		RPCURI:      "/transmission/rpc",
 		HTTPTimeout: timeout,
-		UserAgent:   "go-trpc"})
+		UserAgent:   "trpc"})
 	if err != nil {
 		fmt.Println(err)
 	}

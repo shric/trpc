@@ -7,17 +7,15 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/jessevdk/go-flags"
-	"github.com/shric/go-trpc/pkg/add"
-	"github.com/shric/go-trpc/pkg/list"
-	"github.com/shric/go-trpc/pkg/rm"
+	cmd "github.com/shric/trpc/cmd/trpc"
 )
 
 type dispatch map[string]func(*transmissionrpc.Client, []string)
 
 type options struct {
-	List list.Options `command:"list" alias:"l" description:"List torrents"`
-	Add  add.Options  `command:"add" alias:"a" description:"Add torrents"`
-	Rm   rm.Options   `command:"rm" alias:"r" description:"Remove torrents"`
+	List cmd.ListOptions `command:"list" alias:"l" description:"List torrents"`
+	Add  cmd.AddOptions  `command:"add" alias:"a" description:"Add torrents"`
+	Rm   cmd.RmOptions   `command:"rm" alias:"r" description:"Remove torrents"`
 }
 
 func main() {
@@ -34,11 +32,11 @@ func main() {
 
 	switch p.Active.Name {
 	case "list":
-		list.List(client, arguments.List, remaining)
+		cmd.List(client, arguments.List, remaining)
 	case "add":
-		add.Add(client, arguments.Add, remaining)
+		cmd.Add(client, arguments.Add, remaining)
 	case "rm":
-		rm.Rm(client, arguments.Rm, remaining)
+		cmd.Rm(client, arguments.Rm, remaining)
 	}
 	t := time.Now()
 	elapsed := t.Sub(start)

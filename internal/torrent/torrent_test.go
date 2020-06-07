@@ -6,7 +6,7 @@ import (
 
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
-	"github.com/shric/go-trpc/pkg/config"
+	"github.com/shric/trpc/internal/config"
 )
 
 func MakeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64,

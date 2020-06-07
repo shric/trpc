@@ -1,4 +1,4 @@
-package rm
+package cmd
 
 import (
 	"fmt"
@@ -6,18 +6,18 @@ import (
 	"strconv"
 
 	"github.com/hekmon/transmissionrpc"
-	"github.com/shric/go-trpc/pkg/filter"
+	"github.com/shric/trpc/internal/filter"
 )
 
-// Options is all the command line options for the rm command
-type Options struct {
+// RmOptions is all the command line options for the rm command
+type RmOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really allow all torrents to be removed"`
 	Nuke           bool `long:"nuke" description:"Delete the data associated with the torrent"`
 }
 
 // Rm implements the rm command.
-func Rm(client *transmissionrpc.Client, opts Options, args []string) {
+func Rm(client *transmissionrpc.Client, opts RmOptions, args []string) {
 	if len(args) == 0 && !opts.ForceAll {
 		return
 	}

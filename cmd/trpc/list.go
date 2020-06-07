@@ -1,5 +1,4 @@
-// Package list provides the list command and its formatting.
-package list
+package cmd
 
 import (
 	"bytes"
@@ -7,9 +6,9 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/shric/go-trpc/pkg/config"
-	"github.com/shric/go-trpc/pkg/filter"
-	"github.com/shric/go-trpc/pkg/torrent"
+	"github.com/shric/trpc/internal/config"
+	"github.com/shric/trpc/internal/filter"
+	"github.com/shric/trpc/internal/torrent"
 
 	"github.com/hekmon/transmissionrpc"
 )
@@ -25,14 +24,14 @@ func format(torrent *torrent.Torrent, conf *config.Config) string {
 	return tpl.String()
 }
 
-// Options defines all the command line options for list.
-type Options struct {
+// ListOptions defines all the command line options for list.
+type ListOptions struct {
 	filter.Options `group:"filters"`
 	NoTotals       bool `short:"n" long:"no-totals" description:"suppress output of totals"`
 }
 
 // List provides a list of all or selected torrents
-func List(client *transmissionrpc.Client, opts Options, args []string) {
+func List(client *transmissionrpc.Client, opts ListOptions, args []string) {
 	f := filter.New(opts.Options)
 
 	torrents, err := client.TorrentGet([]string{

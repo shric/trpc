@@ -6,7 +6,7 @@ import (
 	"math"
 	"strings"
 
-	"github.com/shric/go-trpc/pkg/config"
+	"github.com/shric/trpc/internal/config"
 
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"

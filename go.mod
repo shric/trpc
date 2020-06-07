@@ -1,4 +1,4 @@
-module github.com/shric/go-trpc
+module github.com/shric/trpc
 
 go 1.14
 
