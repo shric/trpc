@@ -25,7 +25,7 @@ The intention is to provide a more user friendly interface compared to `transmis
 * add command
   * [x] Add torrents by filename or URL
   * [x] Add paused torrents by URL
-  * [ ] Add paused torrents by filename
+  * [x] Add paused torrents by filename
 
 * rm command
   * [x] --nuke: Remove local data as well as torrent.

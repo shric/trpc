@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"net/url"
+	"os"
 
 	"github.com/hekmon/transmissionrpc"
 )
@@ -22,9 +23,14 @@ func Add(client *transmissionrpc.Client, opts AddOptions, args []string) {
 		// Assume it's a file.
 		if err != nil || url.Scheme == "" {
 			fmt.Println("Treating as file.")
-			// TODO: provide paused files.
-			// https://github.com/hekmon/transmissionrpc/issues/11
-			torrent, err = client.TorrentAddFile(arg)
+			filepath := arg
+			var b64 string
+			b64, err = transmissionrpc.File2Base64(filepath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "can't encode '%s' content as base64: %v", filepath, err)
+			} else {
+				torrent, err = client.TorrentAdd(&transmissionrpc.TorrentAddPayload{MetaInfo: &b64, Paused: &opts.Paused})
+			}
 		} else { // It's a URL, pass it to transmission.
 			payload := &transmissionrpc.TorrentAddPayload{
 				Filename: &arg,
