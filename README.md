@@ -10,10 +10,14 @@ A pleasant frontend for transmission.
 
 This project was only started recently and therefore is very barebones.
 
-## Features
+The intention is to provide a more user friendly interface compared to `transmission-remote`.
+
+## Features (unchecked will be implemented soon)
 
 * Filters (applies to list and rm)
   * [x] -i, --incomplete: Include only incomplete torrents
+
+* [ ] Pass filenames instead of IDs.
 
 * list command
   * [x] Basic list functionality
@@ -27,8 +31,28 @@ This project was only started recently and therefore is very barebones.
   * [x] --nuke: Remove local data as well as torrent.
   * [x] --force-all: Really remove all torrents if no IDs specified.
 
-* [ ] Pass filenames instead of IDs.
 
 * [ ] start command
 
 * [ ] stop command
+
+## Installation
+
+I wouldn't consider this very useful yet, but:
+
+```sh
+go install github.com/shric/go-trpc/cmd/trpc
+```
+## Usage
+
+| trpc                    | transmission-remote analogue                      | Description                              |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------- |
+| trpc -h                 | transmission-remote -h                            | Show help                                |
+| trpc list               | transmission-remote -l                            | List all torrents                        |
+| trpc list -i            |                                                   | List all incomplete torrents             |
+| trpc rm 123 456         | transmission-remote -t 123,456 -r                 | Remove torrents with IDs 123 and 456     |
+| trpc rm --nuke 123      | transmission-remote -t 123 -rad                   | Remove torrent + data with ID 123        |
+| trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL) |
+| trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state          |
+| trpc rm -i --force-all  |                                                   | Remove all incomplete torrents           |
+
