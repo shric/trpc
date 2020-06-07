@@ -27,8 +27,8 @@ func format(torrent *torrent.Torrent, conf *config.Config) string {
 
 // Options defines all the command line options for list.
 type Options struct {
-	filter.Options
-	NoTotals bool `short:"n" long:"no-totals" description:"suppress output of totals"`
+	filter.Options `group:"filters"`
+	NoTotals       bool `short:"n" long:"no-totals" description:"suppress output of totals"`
 }
 
 // List provides a list of all or selected torrents

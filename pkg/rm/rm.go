@@ -11,9 +11,9 @@ import (
 
 // Options is all the command line options for the rm command
 type Options struct {
-	filter.Options
-	ForceAll bool `long:"force-all" description:"Really allow all torrents to be removed"`
-	Nuke     bool `long:"nuke" description:"Delete the data associated with the torrent"`
+	filter.Options `group:"filters"`
+	ForceAll       bool `long:"force-all" description:"Really allow all torrents to be removed"`
+	Nuke           bool `long:"nuke" description:"Delete the data associated with the torrent"`
 }
 
 // Rm implements the rm command.
