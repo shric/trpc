@@ -22,19 +22,22 @@ func Add(client *transmissionrpc.Client, opts Options, args []string) {
 		// Assume it's a file.
 		if err != nil || url.Scheme == "" {
 			fmt.Println("Treating as file.")
+			// TODO: provide paused files.
+			// https://github.com/hekmon/transmissionrpc/issues/11
 			torrent, err = client.TorrentAddFile(arg)
 		} else { // It's a URL, pass it to transmission.
 			payload := &transmissionrpc.TorrentAddPayload{
 				Filename: &arg,
+				Paused:   &opts.Paused,
 			}
 			torrent, err = client.TorrentAdd(payload)
 
 		}
 		if err != nil {
-			fmt.Println("err: ", err)
+			fmt.Println("Add: err: ", err)
+		} else {
+			fmt.Printf("Added torrent with ID %d: %s\n", *torrent.ID, *torrent.Name)
 		}
 
-		fmt.Printf("%+v\n", torrent)
-		fmt.Println(arg)
 	}
 }

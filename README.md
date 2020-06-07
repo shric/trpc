@@ -18,4 +18,5 @@ This project was only started recently and therefore is very barebones.
 
 * Add command
   * [x] Add torrents by filename or URL
-  * [ ] Add torrents paused
+  * [x] Add paused torrents by URL
+  * [ ] Add paused torrents by filename
