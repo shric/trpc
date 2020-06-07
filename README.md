@@ -12,11 +12,23 @@ This project was only started recently and therefore is very barebones.
 
 ## Features
 
-* List command
-  * [x] Basic list functionality
-  * [x] List incomplete filter
+* Filters (applies to list and rm)
+  * [x] -i, --incomplete: Include only incomplete torrents
 
-* Add command
+* list command
+  * [x] Basic list functionality
+
+* add command
   * [x] Add torrents by filename or URL
   * [x] Add paused torrents by URL
   * [ ] Add paused torrents by filename
+
+* rm command
+  * [x] --nuke: Remove local data as well as torrent.
+  * [x] --force-all: Really remove all torrents if no IDs specified.
+
+* [ ] Pass filenames instead of IDs.
+
+* [ ] start command
+
+* [ ] stop command
