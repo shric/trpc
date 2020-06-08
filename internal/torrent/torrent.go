@@ -3,7 +3,6 @@ package torrent
 
 import (
 	"fmt"
-	"math"
 	"strings"
 
 	"github.com/shric/trpc/internal/config"
@@ -46,9 +45,6 @@ func (torrent Torrent) have() int64 {
 }
 
 func (torrent Torrent) progress() float64 {
-	if torrent.original.SizeWhenDone == nil {
-		return 100.0
-	}
 	if *torrent.original.RecheckProgress != 0 {
 		return 100.0 * *torrent.original.RecheckProgress
 	}
@@ -56,12 +52,7 @@ func (torrent Torrent) progress() float64 {
 }
 
 func (torrent Torrent) ratio() float64 {
-	if torrent.original.SizeWhenDone == nil {
-		if *torrent.original.UploadedEver != 0 {
-			return math.Inf(1)
-		}
-		return math.NaN()
-	}
+	// Returns +Inf on positive/0 or NaN on 0/0.
 	return float64(*torrent.original.UploadedEver) / float64(torrent.original.SizeWhenDone.Byte())
 }
 
