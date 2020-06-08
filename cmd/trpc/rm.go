@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"os"
-	"strconv"
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
@@ -21,37 +19,11 @@ func Rm(client *transmissionrpc.Client, opts RmOptions, args []string) {
 	if len(args) == 0 && !opts.ForceAll {
 		return
 	}
-	ids := make([]int64, 0, len(args))
-
-	f := filter.New(opts.Options)
-
-	fields := []string{"name", "id"}
-	for _, arg := range f.Args {
-		fields = append(fields, arg)
-	}
-
-	for _, strID := range args {
-		if id, err := strconv.ParseInt(strID, 10, 64); err == nil {
-			ids = append(ids, id)
-		} else {
-			fmt.Println("invalid id: ", strID)
-		}
-	}
-
-	torrents, err := client.TorrentGet(fields, ids)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return
-	}
-
-	for _, transmissionrpcTorrent := range torrents {
-		if !f.CheckFilter(transmissionrpcTorrent) {
-			continue
-		}
+	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
 		client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
-			IDs:             []int64{*transmissionrpcTorrent.ID},
+			IDs:             []int64{*torrent.ID},
 			DeleteLocalData: opts.Nuke,
 		})
-		fmt.Printf("Removed torrent %d: %s\n", *transmissionrpcTorrent.ID, *transmissionrpcTorrent.Name)
-	}
+		fmt.Printf("Removed torrent %d: %s\n", *torrent.ID, *torrent.Name)
+	})
 }

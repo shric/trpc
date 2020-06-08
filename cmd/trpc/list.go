@@ -32,36 +32,24 @@ type ListOptions struct {
 
 // List provides a list of all or selected torrents
 func List(client *transmissionrpc.Client, opts ListOptions, args []string) {
-	f := filter.New(opts.Options)
+	var total torrent.Torrent
+	total.Error = " "
+	conf := config.ReadConfig()
 
-	torrents, err := client.TorrentGet([]string{
+	ProcessTorrents(client, opts.Options, args, []string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
 		"status", "trackers", "bandwidthPriority", "uploadedEver",
 		"downloadDir", "addedDate", "doneDate", "startDate",
 		"isFinished",
-	}, nil)
-
-	var total torrent.Torrent
-	total.Error = " "
-	conf := config.ReadConfig()
-
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return
-	}
-
-	for _, transmissionrpcTorrent := range torrents {
-		if !f.CheckFilter(transmissionrpcTorrent) {
-			continue
-		}
+	}, func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 		result := torrent.NewFrom(transmissionrpcTorrent, conf)
 		total.Size += result.Size
 		total.Up += result.Up
 		total.Down += result.Down
 		formattedTorrent := format(result, conf)
 		fmt.Println(formattedTorrent)
-	}
+	})
 	formattedTotal := format(&total, conf)
 	fmt.Println(formattedTotal)
 }
