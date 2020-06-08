@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"os"
-	"time"
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/jessevdk/go-flags"
@@ -30,7 +28,6 @@ func main() {
 	if err != nil {
 		os.Exit(1)
 	}
-	start := time.Now()
 	client := Connect()
 
 	switch p.Active.Name {
@@ -47,7 +44,4 @@ func main() {
 	case "version":
 		cmd.Version()
 	}
-	t := time.Now()
-	elapsed := t.Sub(start)
-	fmt.Println(elapsed)
 }
