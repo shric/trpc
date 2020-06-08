@@ -32,9 +32,9 @@ The intention is to provide a more user friendly interface compared to `transmis
   * [x] --force-all: Really remove all torrents if no IDs specified.
 
 
-* [ ] start command
+* [x] start command
 
-* [ ] stop command
+* [x] stop command
 
 ## Installation
 
@@ -45,7 +45,7 @@ go install github.com/shric/trpc/cmd/trpc
 ```
 ## Usage
 
-| trpc                    | transmission-remote analogue                      | Description                              |
+| trpc                    | transmission-remote analogue (if present)         | Description                              |
 | ----------------------- | ------------------------------------------------- | ---------------------------------------- |
 | trpc -h                 | transmission-remote -h                            | Show help                                |
 | trpc list               | transmission-remote -l                            | List all torrents                        |
@@ -55,4 +55,7 @@ go install github.com/shric/trpc/cmd/trpc
 | trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL) |
 | trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state          |
 | trpc rm -i --force-all  |                                                   | Remove all incomplete torrents           |
+| trpc start 123          | transmission-remote -t 123 -s                     | Start torrent 123                        |
+| trpc start --now 123    |                                                   | Start torrent 123 (bypass queue)         |
+| trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                         |
 
