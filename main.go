@@ -13,11 +13,12 @@ import (
 type dispatch map[string]func(*transmissionrpc.Client, []string)
 
 type options struct {
-	List  cmd.ListOptions  `command:"list" alias:"l" description:"List torrents"`
-	Add   cmd.AddOptions   `command:"add" alias:"a" description:"Add torrents"`
-	Rm    cmd.RmOptions    `command:"rm" alias:"r" description:"Remove torrents"`
-	Start cmd.StartOptions `command:"start" description:"Start torrents"`
-	Stop  cmd.StopOptions  `command:"stop" description:"Start torrents"`
+	List    cmd.ListOptions  `command:"list" alias:"l" description:"List torrents"`
+	Add     cmd.AddOptions   `command:"add" alias:"a" description:"Add torrents"`
+	Rm      cmd.RmOptions    `command:"rm" alias:"r" description:"Remove torrents"`
+	Start   cmd.StartOptions `command:"start" description:"Start torrents"`
+	Stop    cmd.StopOptions  `command:"stop" description:"Start torrents"`
+	Version struct{}         `command:"version" description:"Print version"`
 }
 
 func main() {
@@ -43,6 +44,8 @@ func main() {
 		cmd.Stop(client, arguments.Stop, remaining)
 	case "start":
 		cmd.Start(client, arguments.Start, remaining)
+	case "version":
+		cmd.Version()
 	}
 	t := time.Now()
 	elapsed := t.Sub(start)
