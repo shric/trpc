@@ -17,7 +17,7 @@ The intention is to provide a more user friendly interface compared to `transmis
 * Filters (applies to list and rm)
   * [x] -i, --incomplete: Include only incomplete torrents
 
-* [ ] Pass filenames instead of IDs.
+* [x] Pass filenames instead of IDs.
 
 * list command
   * [x] Basic list functionality
@@ -45,17 +45,17 @@ go install github.com/shric/trpc/cmd/trpc
 ```
 ## Usage
 
-| trpc                    | transmission-remote analogue (if present)         | Description                              |
-| ----------------------- | ------------------------------------------------- | ---------------------------------------- |
-| trpc -h                 | transmission-remote -h                            | Show help                                |
-| trpc list               | transmission-remote -l                            | List all torrents                        |
-| trpc list -i            |                                                   | List all incomplete torrents             |
-| trpc rm 123 456         | transmission-remote -t 123,456 -r                 | Remove torrents with IDs 123 and 456     |
-| trpc rm --nuke 123      | transmission-remote -t 123 -rad                   | Remove torrent + data with ID 123        |
-| trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL) |
-| trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state          |
-| trpc rm -i --force-all  |                                                   | Remove all incomplete torrents           |
-| trpc start 123          | transmission-remote -t 123 -s                     | Start torrent 123                        |
-| trpc start --now 123    |                                                   | Start torrent 123 (bypass queue)         |
-| trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                         |
-
+| trpc                    | transmission-remote analogue (if present)         | Description                                  |
+| ----------------------- | ------------------------------------------------- | -------------------------------------------- |
+| trpc -h                 | transmission-remote -h                            | Show help                                    |
+| trpc list               | transmission-remote -l                            | List all torrents                            |
+| trpc list -i            |                                                   | List all incomplete torrents                 |
+| trpc rm 123 456         | transmission-remote -t 123,456 -r                 | Remove torrents with IDs 123 and 456         |
+| trpc rm --nuke 123      | transmission-remote -t 123 -rad                   | Remove torrent + data with ID 123            |
+| trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL)     |
+| trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state              |
+| trpc rm -i --force-all  |                                                   | Remove all incomplete torrents               |
+| trpc start 123          | transmission-remote -t 123 -s                     | Start torrent 123                            |
+| trpc start --now 123    |                                                   | Start torrent 123 (bypass queue)             |
+| trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                             |
+| trpc list *             |                                                   | List all running torrents in the current dir |
