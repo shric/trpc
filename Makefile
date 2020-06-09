@@ -10,6 +10,7 @@ os = $(word 1, $@)
 
 VER_PKG := github.com/shric/trpc/cmd/trpc
 
+.PHONY: $(BINARY)
 $(BINARY):
 	go build -ldflags "-X $(VER_PKG).sha1ver=$(SHA1) -X $(VER_PKG).version=$(VERSION) -X $(VER_PKG).buildTime=$(NOW)" 
 
