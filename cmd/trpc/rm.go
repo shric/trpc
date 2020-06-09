@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
@@ -20,10 +21,14 @@ func Rm(client *transmissionrpc.Client, opts RmOptions, args []string) {
 		return
 	}
 	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
+		err := client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
 			IDs:             []int64{*torrent.ID},
 			DeleteLocalData: opts.Nuke,
 		})
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return
+		}
 		fmt.Printf("Removed torrent %d: %s\n", *torrent.ID, *torrent.Name)
 	})
 }

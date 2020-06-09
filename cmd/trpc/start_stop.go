@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
@@ -22,7 +23,10 @@ func Start(client *transmissionrpc.Client, opts StartOptions, args []string) {
 	}
 
 	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		startFunc([]int64{*torrent.ID})
+		err := startFunc([]int64{*torrent.ID})
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 		fmt.Printf("Started torrent %d: %s\n", *torrent.ID, *torrent.Name)
 	})
 	return
@@ -36,7 +40,10 @@ type StopOptions struct {
 // Stop stops torrents.
 func Stop(client *transmissionrpc.Client, opts StopOptions, args []string) {
 	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		client.TorrentStopIDs([]int64{*torrent.ID})
+		err := client.TorrentStopIDs([]int64{*torrent.ID})
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+		}
 		fmt.Printf("Stopped torrent %d: %s\n", *torrent.ID, *torrent.Name)
 	})
 	return
