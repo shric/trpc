@@ -20,7 +20,6 @@ type options struct {
 }
 
 func main() {
-
 	var arguments = new(options)
 
 	p := flags.NewParser(arguments, flags.Default)
