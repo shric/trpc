@@ -12,7 +12,19 @@ This project was only started recently and therefore is very barebones.
 
 The intention is to provide a more user friendly interface compared to `transmission-remote`.
 
-## Features (unchecked will be implemented soon)
+Here are some examples of things you can do easily that would require at least
+some scripting with transmission-remote alone:
+
+```sh
+# Stop all incomplete torrents
+trpc stop -i
+
+# Start all torrents that live in a specific download dir
+trpc start ~/torrent/foo/*
+```
+
+
+## Features
 
 * Filters (applies to list and rm)
   * [x] -i, --incomplete: Include only incomplete torrents
@@ -36,6 +48,28 @@ The intention is to provide a more user friendly interface compared to `transmis
 * [x] stop command
 
 * [x] verify command
+
+## Upcoming features (near future)
+
+* [ ] move command
+
+* [ ] watch command
+
+* More filters:
+  * [ ] -t, --tracker: Select only torrents using a particular tracker
+  * [ ] -e, --error: Select only torrents with a given error substring
+
+* Sorting:
+  * [ ] by size
+  * [ ] by name
+  * [ ] by id
+
+## Upcoming features (possible, distant future)
+
+* [ ] A TUI mode
+
+* [ ] Support bittorrent clients other than transmission
+
 ## Installation
 
 ```sh
