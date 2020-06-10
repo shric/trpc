@@ -22,7 +22,7 @@ lint:
 
 $(PLATFORMS):
 	mkdir -p release
-	GOOS=$(os) GOARCH=amd64 go build -ldflags "-X $(VER_PKG).sha1ver=$(SHA1) -X $(VER_PKG).version=$(VERSION) -X $(VER_PKG).buildTime=$(NOW)" -o release/$(BINARY)-$(VERSION)-$(os)-amd64
+	GOOS=$(os) GOARCH=amd64 go build -ldflags "-s -w -X $(VER_PKG).sha1ver=$(SHA1) -X $(VER_PKG).version=$(VERSION) -X $(VER_PKG).buildTime=$(NOW)" -o release/$(BINARY)-$(VERSION)-$(os)-amd64
 
 release: $(PLATFORMS)
 
