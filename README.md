@@ -31,11 +31,11 @@ The intention is to provide a more user friendly interface compared to `transmis
   * [x] --nuke: Remove local data as well as torrent.
   * [x] --force-all: Really remove all torrents if no IDs specified.
 
-
 * [x] start command
 
 * [x] stop command
 
+* [x] verify command
 ## Installation
 
 ```sh
