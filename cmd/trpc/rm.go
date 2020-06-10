@@ -18,6 +18,7 @@ type RmOptions struct {
 // Rm implements the rm command.
 func Rm(client *transmissionrpc.Client, opts RmOptions, args []string) {
 	if len(args) == 0 && !opts.ForceAll {
+		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to delete all torrents!")
 		return
 	}
 	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
