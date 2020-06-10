@@ -10,6 +10,19 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
+func getCanonicalFnames(fnames []string) (canonicalFnames map[string]int64) {
+	canonicalFnames = make(map[string]int64)
+	for _, fn := range fnames {
+		canonicalPath, err := filepath.Abs(fn)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return
+		}
+		canonicalFnames[canonicalPath] = -1
+	}
+	return
+}
+
 func getIncompleteDir(client *transmissionrpc.Client) (incompleteDir string, enabled bool) {
 	session, err := client.SessionArgumentsGet()
 	if err != nil {
@@ -29,27 +42,18 @@ func getids(client *transmissionrpc.Client, fnames []string) (ids []int64) {
 	if len(fnames) == 0 {
 		return
 	}
-	torrents, err := client.TorrentGet([]string{"id", "downloadDir", "name"}, nil)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		return
-	}
-	canonicalFnames := make(map[string]int64)
-	for _, fn := range fnames {
-		canonicalPath, err := filepath.Abs(fn)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
-		}
-		canonicalFnames[canonicalPath] = -1
-	}
-
+	canonicalFnames := getCanonicalFnames(fnames)
 	paths := make([]string, 1, 2)
 	incompleteDir, enabled := getIncompleteDir(client)
 	if enabled {
 		paths = append(paths, incompleteDir)
 	}
 
+	torrents, err := client.TorrentGet([]string{"id", "downloadDir", "name"}, nil)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		return
+	}
 	for _, torrent := range torrents {
 		paths[0] = *torrent.DownloadDir
 		for _, path := range paths {
