@@ -77,9 +77,7 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 
 	f := filter.New(filterOptions)
 
-	for _, arg := range f.Args {
-		fields = append(fields, arg)
-	}
+	fields = append(fields, f.Args...)
 
 	fnames := make([]string, 0, len(args))
 	for _, strID := range args {
@@ -102,5 +100,4 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 		}
 		do(transmissionrpcTorrent)
 	}
-	return
 }

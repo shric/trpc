@@ -35,7 +35,7 @@ func New(opts Options) *Instance {
 				args: []string{"leftUntilDone"},
 			},
 		},
-		Args: make([]string, 0, 0),
+		Args: make([]string, 0),
 	}
 	argsSet := make(map[string]struct{})
 	for _, i := range filter.filterFuncs {

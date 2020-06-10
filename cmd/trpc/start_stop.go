@@ -29,7 +29,6 @@ func Start(client *transmissionrpc.Client, opts StartOptions, args []string) {
 		}
 		fmt.Printf("Started torrent %d: %s\n", *torrent.ID, *torrent.Name)
 	})
-	return
 }
 
 // StopOptions is all the command line options for the stop command
@@ -46,5 +45,4 @@ func Stop(client *transmissionrpc.Client, opts StopOptions, args []string) {
 		}
 		fmt.Printf("Stopped torrent %d: %s\n", *torrent.ID, *torrent.Name)
 	})
-	return
 }

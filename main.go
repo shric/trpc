@@ -3,12 +3,9 @@ package main
 import (
 	"os"
 
-	"github.com/hekmon/transmissionrpc"
 	"github.com/jessevdk/go-flags"
 	cmd "github.com/shric/trpc/cmd/trpc"
 )
-
-type dispatch map[string]func(*transmissionrpc.Client, []string)
 
 type options struct {
 	List    cmd.ListOptions  `command:"list" alias:"l" description:"List torrents"`
