@@ -38,11 +38,10 @@ The intention is to provide a more user friendly interface compared to `transmis
 
 ## Installation
 
-I wouldn't consider this very useful yet, but:
-
 ```sh
 go install github.com/shric/trpc/cmd/trpc
 ```
+
 ## Usage
 
 | trpc                    | transmission-remote analogue (if present)         | Description                                  |
