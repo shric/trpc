@@ -18,7 +18,7 @@ func makeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64, L
 	BandwidthPriority := int64(0)
 	Status := transmissionrpc.TorrentStatus(0)
 	Trackers := []*transmissionrpc.Tracker{
-		&transmissionrpc.Tracker{Announce: Tracker},
+		{Announce: Tracker},
 	}
 	trpcTorrent := transmissionrpc.Torrent{
 		SizeWhenDone:      &SizeWhenDone,
