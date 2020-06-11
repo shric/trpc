@@ -26,50 +26,81 @@ trpc start ~/torrent/foo/*
 
 ## Features
 
-* Filters (applies to list and rm)
-  * [x] -i, --incomplete: Include only incomplete torrents
+### Commands
 
-* [x] Pass filenames instead of IDs.
+`add`: add torrents by file or URL (-p to add paused)
 
-* list command
-  * [x] Basic list functionality
+`errors`: show torrents that have errors
 
-* add command
-  * [x] Add torrents by filename or URL
-  * [x] Add paused torrents by URL
-  * [x] Add paused torrents by filename
+`list`: list torrents
 
-* rm command
-  * [x] --nuke: Remove local data as well as torrent.
-  * [x] --force-all: Really remove all torrents if no IDs specified.
+`move`: move torrents to another location
 
-* [x] start command
+`rm`: remove torrents (--nuke to delete the data as well as the torrent)
 
-* [x] stop command
+`start`: start torrents (--now to jump queue)
 
-* [x] verify command
+`stop`: stop torrents
 
-* [x] move command
+`verify`: verify (hash check) torrents
 
-## Upcoming features (near future)
+`version`: show version
 
+### Filters
 
-* [ ] watch command
+All commands above except for `add` and `version` accept filter arguments to limit the torrents acted upon (or displayed in the case of `list`):
 
-* More filters:
-  * [ ] -t, --tracker: Select only torrents using a particular tracker
-  * [ ] -e, --error: Select only torrents with a given error substring
+`-i, --incomplete`: Include only incomplete torrents
 
-* Sorting:
-  * [ ] by size
-  * [ ] by name
-  * [ ] by id
+### Torrents can be selected by ID or filename
 
-## Upcoming features (possible, distant future)
+Unlike `transmission-remote`, you can refer to a torrent by its filename. This allows easy shell globbing. Example:
 
-* [ ] A TUI mode
+```sh
+# Pause all incomplete torrents in ~/torrents/recent
+$ trpc stop --incomplete ~/torrent/recent/*
+```
+## Planned upcoming features (near future)
 
-* [ ] Support bittorrent clients other than transmission
+### More commands
+
+`limit`: Set global/torrent upload/download rate limits
+
+`files`: List files within torrents
+
+`get`: set specified files to be downloaded
+
+`noget`: set specified files to not be downloaded
+
+`info`: Show detailed torrent info
+
+`sessioninfo`: Show session information
+
+`rename`: Rename the torrent path (without moving it to another downloadDir)
+
+`watch`: Show a progress bar for incomplete active torrents
+
+`which`: Identify which torrent a file belongs to
+
+### More filters
+
+* `-t, --tracker`: Select only torrents using a particular tracker
+
+* `-e, --error`: Select only torrents with a given error substring
+
+### Sorting
+
+* by size
+
+* by name
+
+* by id
+
+## Planned features (possible, distant future)
+
+* A TUI mode
+
+* Support bittorrent clients other than transmission
 
 ## Installation
 
@@ -77,7 +108,7 @@ trpc start ~/torrent/foo/*
 go install github.com/shric/trpc/cmd/trpc
 ```
 
-## Usage
+## More usage examples
 
 | trpc                    | transmission-remote analogue (if present)         | Description                                  |
 | ----------------------- | ------------------------------------------------- | -------------------------------------------- |
