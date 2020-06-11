@@ -8,14 +8,15 @@ import (
 )
 
 type options struct {
+	Common  cmd.CommonOptions `group:"global options"`
 	Add     cmd.AddOptions    `command:"add" alias:"a" description:"Add torrents"`
+	Errors  cmd.ErrorsOptions `command:"errors" alias:"e" description:"Show torrent error strings"`
 	List    cmd.ListOptions   `command:"list" alias:"l" description:"List torrents"`
 	Move    cmd.MoveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Rm      cmd.RmOptions     `command:"rm" alias:"r" description:"Remove torrents"`
 	Start   cmd.StartOptions  `command:"start" description:"Start torrents"`
 	Stop    cmd.StopOptions   `command:"stop" description:"Start torrents"`
 	Verify  cmd.VerifyOptions `command:"verify" alias:"hash" description:"Verify torrents (hash check)"`
-	Common  cmd.CommonOptions `group:"global options"`
 	Version struct{}          `command:"version" description:"Print version"`
 }
 
