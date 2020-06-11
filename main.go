@@ -15,6 +15,7 @@ type options struct {
 	Start   cmd.StartOptions  `command:"start" description:"Start torrents"`
 	Stop    cmd.StopOptions   `command:"stop" description:"Start torrents"`
 	Verify  cmd.VerifyOptions `command:"verify" alias:"hash" description:"Verify torrents (hash check)"`
+	Move    cmd.MoveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Version struct{}          `command:"version" description:"Print version"`
 }
 
@@ -36,5 +37,6 @@ func main() {
 		"add":     cmd.NewCommand(cmd.Add, args.Add, remaining, args.Common, client),
 		"list":    cmd.NewCommand(cmd.List, args.List, remaining, args.Common, client),
 		"version": cmd.NewCommand(cmd.Version, args.Version, remaining, args.Common, client),
+		"move":    cmd.NewCommand(cmd.Move, args.Move, remaining, args.Common, client),
 	}[p.Active.Name].Run()
 }
