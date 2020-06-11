@@ -19,6 +19,7 @@ type Command struct {
 	Runner         func(c *Command)
 }
 
+// Run is a simple wrapper to call the runner function of a command.
 func (c *Command) Run() {
 	if c != nil {
 		c.Runner(c)

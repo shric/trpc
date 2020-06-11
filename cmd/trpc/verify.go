@@ -14,6 +14,7 @@ type VerifyOptions struct {
 	ForceAll       bool `long:"force-all" description:"Really verify all torrents"`
 }
 
+// Verify is a command that verifies (hash checks) the selected torrents.
 func Verify(c *Command) {
 	opts, ok := c.CommandOptions.(VerifyOptions)
 	optionsCheck(ok)

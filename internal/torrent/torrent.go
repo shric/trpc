@@ -16,6 +16,7 @@ type unitMap struct {
 	Name   string
 }
 
+// Constants for binary units.
 const (
 	_ = 1 << (10 * iota)
 	KiB
