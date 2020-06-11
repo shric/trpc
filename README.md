@@ -49,9 +49,10 @@ trpc start ~/torrent/foo/*
 
 * [x] verify command
 
+* [x] move command
+
 ## Upcoming features (near future)
 
-* [ ] move command
 
 * [ ] watch command
 
