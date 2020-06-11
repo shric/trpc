@@ -66,6 +66,7 @@ func getIncompleteDir(client *transmissionrpc.Client) (incompleteDir string, ena
 	if !*session.IncompleteDirEnabled {
 		return
 	}
+	enabled = true
 	incompleteDir = *session.IncompleteDir
 	return
 }
