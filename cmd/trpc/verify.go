@@ -14,18 +14,21 @@ type VerifyOptions struct {
 	ForceAll       bool `long:"force-all" description:"Really verify all torrents"`
 }
 
-// Verify implements the verify command (hash check torrents)
-func Verify(client *transmissionrpc.Client, opts VerifyOptions, args []string) {
-	if len(args) == 0 && !opts.ForceAll {
+func Verify(c *Command) {
+	opts, ok := c.CommandOptions.(VerifyOptions)
+	optionsCheck(ok)
+	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to verify all torrents!")
 		return
 	}
-	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		err := client.TorrentVerifyIDs([]int64{*torrent.ID})
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+		if !c.CommonOptions.DryRun {
+			err := c.Client.TorrentVerifyIDs([]int64{*torrent.ID})
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				return
+			}
 		}
-		fmt.Printf("Verifying torrent %d: %s\n", *torrent.ID, *torrent.Name)
+		c.status("Verifying torrent", torrent)
 	})
 }

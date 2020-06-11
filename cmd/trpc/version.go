@@ -9,6 +9,6 @@ var (
 )
 
 // Version prints the version number and build info.
-func Version() {
+func Version(_ *Command) {
 	fmt.Printf("trpc version %s (%s) built at %s\n", version, sha1ver, buildTime)
 }

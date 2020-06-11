@@ -10,6 +10,41 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
+// Command holds everything needed to run a command
+type Command struct {
+	CommandOptions interface{}
+	PositionalArgs []string
+	CommonOptions  CommonOptions
+	Client         *transmissionrpc.Client
+	Runner         func(c *Command)
+}
+
+func (c *Command) Run() {
+	if c != nil {
+		c.Runner(c)
+	}
+}
+
+// NewCommand returns a Command
+func NewCommand(runner func(c *Command), commandOptions interface{},
+	positionalArgs []string, commonOptions CommonOptions,
+	client *transmissionrpc.Client) (command *Command) {
+	return &Command{
+		CommandOptions: commandOptions,
+		PositionalArgs: positionalArgs,
+		CommonOptions:  commonOptions,
+		Client:         client,
+		Runner:         runner,
+	}
+
+}
+
+// CommonOptions declares command line arguments that apply to all or most
+// subcommands. It still needs to be explicitly included.
+type CommonOptions struct {
+	DryRun bool `short:"n" long:"dry-run" description:"Dry run -- don't talk to the client, just print what would happen"`
+}
+
 func getCanonicalFnames(fnames []string) (canonicalFnames map[string]int64) {
 	canonicalFnames = make(map[string]int64)
 	for _, fn := range fnames {
@@ -103,5 +138,20 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 			continue
 		}
 		do(transmissionrpcTorrent)
+	}
+}
+
+func (c *Command) status(msg string, torrent *transmissionrpc.Torrent) {
+	var dryRun string
+	if c.CommonOptions.DryRun {
+		dryRun = "[dry run] "
+	}
+	fmt.Printf("%s%s %d: %s\n", dryRun, msg, *torrent.ID, *torrent.Name)
+}
+
+func optionsCheck(ok bool) {
+	if !ok {
+		fmt.Fprintln(os.Stderr, "Fatal internal error: bad options passed.")
+		os.Exit(1)
 	}
 }

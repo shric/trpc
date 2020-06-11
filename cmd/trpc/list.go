@@ -31,12 +31,16 @@ type ListOptions struct {
 }
 
 // List provides a list of all or selected torrents
-func List(client *transmissionrpc.Client, opts ListOptions, args []string) {
+func List(c *Command) {
+	opts, ok := c.CommandOptions.(ListOptions)
+	optionsCheck(ok)
 	var total torrent.Torrent
 	total.Error = " "
 	conf := config.ReadConfig()
-
-	ProcessTorrents(client, opts.Options, args, []string{
+	if c.CommonOptions.DryRun {
+		fmt.Fprintln(os.Stderr, "--dry-run has no effect on list as list doesn't change state")
+	}
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
 		"status", "trackers", "bandwidthPriority", "uploadedEver",

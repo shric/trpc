@@ -14,11 +14,17 @@ type AddOptions struct {
 }
 
 // Add adds a new torrent by URL or file
-func Add(client *transmissionrpc.Client, opts AddOptions, args []string) {
-	for _, arg := range args {
+func Add(c *Command) {
+	opts, ok := c.CommandOptions.(AddOptions)
+	optionsCheck(ok)
+	for _, arg := range c.PositionalArgs {
 		var torrent *transmissionrpc.Torrent
 
 		url, err := url.Parse(arg)
+
+		payload := transmissionrpc.TorrentAddPayload{
+			Paused: &opts.Paused,
+		}
 
 		// Assume it's a file.
 		if err != nil || url.Scheme == "" {
@@ -28,21 +34,19 @@ func Add(client *transmissionrpc.Client, opts AddOptions, args []string) {
 			b64, err = transmissionrpc.File2Base64(filepath)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "can't encode '%s' content as base64: %v", filepath, err)
-			} else {
-				torrent, err = client.TorrentAdd(&transmissionrpc.TorrentAddPayload{MetaInfo: &b64, Paused: &opts.Paused})
+				return
 			}
+			payload.MetaInfo = &b64
 		} else { // It's a URL, pass it to transmission.
-			payload := &transmissionrpc.TorrentAddPayload{
-				Filename: &arg,
-				Paused:   &opts.Paused,
-			}
-			torrent, err = client.TorrentAdd(payload)
-
+			payload.Filename = &arg
+		}
+		if !c.CommonOptions.DryRun {
+			torrent, err = c.Client.TorrentAdd(&payload)
 		}
 		if err != nil {
 			fmt.Println("Add: err: ", err)
 		} else {
-			fmt.Printf("Added torrent with ID %d: %s\n", *torrent.ID, *torrent.Name)
+			c.status("Added torrent with ID", torrent)
 		}
 
 	}

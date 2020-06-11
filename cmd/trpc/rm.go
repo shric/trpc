@@ -16,20 +16,24 @@ type RmOptions struct {
 }
 
 // Rm implements the rm command.
-func Rm(client *transmissionrpc.Client, opts RmOptions, args []string) {
-	if len(args) == 0 && !opts.ForceAll {
+func Rm(c *Command) {
+	opts, ok := c.CommandOptions.(RmOptions)
+	optionsCheck(ok)
+	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to delete all torrents!")
 		return
 	}
-	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		err := client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
-			IDs:             []int64{*torrent.ID},
-			DeleteLocalData: opts.Nuke,
-		})
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+		if !c.CommonOptions.DryRun {
+			err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
+				IDs:             []int64{*torrent.ID},
+				DeleteLocalData: opts.Nuke,
+			})
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				return
+			}
 		}
-		fmt.Printf("Removed torrent %d: %s\n", *torrent.ID, *torrent.Name)
+		c.status("Removed torrent", torrent)
 	})
 }

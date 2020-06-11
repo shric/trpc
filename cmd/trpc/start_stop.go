@@ -15,19 +15,23 @@ type StartOptions struct {
 }
 
 // Start starts torrents.
-func Start(client *transmissionrpc.Client, opts StartOptions, args []string) {
-	startFunc := client.TorrentStartIDs
+func Start(c *Command) {
+	opts, ok := c.CommandOptions.(StartOptions)
+	optionsCheck(ok)
+	startFunc := c.Client.TorrentStartIDs
 
 	if opts.Now {
-		startFunc = client.TorrentStartNowIDs
+		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		err := startFunc([]int64{*torrent.ID})
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+		if !c.CommonOptions.DryRun {
+			err := startFunc([]int64{*torrent.ID})
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+			}
 		}
-		fmt.Printf("Started torrent %d: %s\n", *torrent.ID, *torrent.Name)
+		c.status("Started torrent", torrent)
 	})
 }
 
@@ -37,12 +41,16 @@ type StopOptions struct {
 }
 
 // Stop stops torrents.
-func Stop(client *transmissionrpc.Client, opts StopOptions, args []string) {
-	ProcessTorrents(client, opts.Options, args, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		err := client.TorrentStopIDs([]int64{*torrent.ID})
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
+func Stop(c *Command) {
+	opts, ok := c.CommandOptions.(StopOptions)
+	optionsCheck(ok)
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+		if !c.CommonOptions.DryRun {
+			err := c.Client.TorrentStopIDs([]int64{*torrent.ID})
+			if err != nil {
+				fmt.Fprintln(os.Stderr, err)
+			}
 		}
-		fmt.Printf("Stopped torrent %d: %s\n", *torrent.ID, *torrent.Name)
+		c.status("Stopped torrent", torrent)
 	})
 }

@@ -8,6 +8,7 @@ import (
 )
 
 type options struct {
+	Common  cmd.CommonOptions `group:"global options"`
 	List    cmd.ListOptions   `command:"list" alias:"l" description:"List torrents"`
 	Add     cmd.AddOptions    `command:"add" alias:"a" description:"Add torrents"`
 	Rm      cmd.RmOptions     `command:"rm" alias:"r" description:"Remove torrents"`
@@ -18,29 +19,22 @@ type options struct {
 }
 
 func main() {
-	var arguments = new(options)
+	var args = new(options)
 
-	p := flags.NewParser(arguments, flags.Default)
+	p := flags.NewParser(args, flags.Default)
 	remaining, err := p.Parse()
 	if err != nil {
 		os.Exit(1)
 	}
 	client := Connect()
 
-	switch p.Active.Name {
-	case "list":
-		cmd.List(client, arguments.List, remaining)
-	case "add":
-		cmd.Add(client, arguments.Add, remaining)
-	case "rm":
-		cmd.Rm(client, arguments.Rm, remaining)
-	case "stop":
-		cmd.Stop(client, arguments.Stop, remaining)
-	case "start":
-		cmd.Start(client, arguments.Start, remaining)
-	case "verify":
-		cmd.Verify(client, arguments.Verify, remaining)
-	case "version":
-		cmd.Version()
-	}
+	map[string]*cmd.Command{
+		"verify":  cmd.NewCommand(cmd.Verify, args.Verify, remaining, args.Common, client),
+		"rm":      cmd.NewCommand(cmd.Rm, args.Rm, remaining, args.Common, client),
+		"start":   cmd.NewCommand(cmd.Start, args.Start, remaining, args.Common, client),
+		"stop":    cmd.NewCommand(cmd.Stop, args.Stop, remaining, args.Common, client),
+		"add":     cmd.NewCommand(cmd.Add, args.Add, remaining, args.Common, client),
+		"list":    cmd.NewCommand(cmd.List, args.List, remaining, args.Common, client),
+		"version": cmd.NewCommand(cmd.Version, args.Version, remaining, args.Common, client),
+	}[p.Active.Name].Run()
 }
