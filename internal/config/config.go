@@ -15,19 +15,21 @@ type Config struct {
 }
 
 // ReadConfig attempts to read ~/.trpc.conf as a toml file and returns a config tree.
-func ReadConfig() (c *Config) {
+func ReadConfig() *Config {
 	var TomlConfig *toml.Tree
 
-	c = &Config{
+	c := &Config{
 		Trackernames: make(map[string]string),
 	}
 
 	usr, err := user.Current()
 	if err != nil {
-		return
+		return nil
 	}
+
 	TomlConfig, _ = toml.LoadFile(path.Join(usr.HomeDir, ".trpc.conf"))
 	tnames := TomlConfig.Get("trackernames").(*toml.Tree)
+
 	for _, shortname := range tnames.Keys() {
 		trackers := tnames.Get(shortname)
 		switch v := trackers.(type) {
@@ -41,5 +43,6 @@ func ReadConfig() (c *Config) {
 			fmt.Printf("Unknown %T\n", v)
 		}
 	}
-	return
+
+	return c
 }

@@ -17,6 +17,7 @@ type MoveOptions struct {
 func getFnamesAndDest(args []string) (fnames []string, dest string) {
 	dest = args[len(args)-1]
 	fnames = args[:len(args)-1]
+
 	return
 }
 
@@ -24,14 +25,17 @@ func getFnamesAndDest(args []string) (fnames []string, dest string) {
 func Move(c *Command) {
 	opts, ok := c.CommandOptions.(MoveOptions)
 	optionsCheck(ok)
+
 	if len(c.PositionalArgs) == 0 {
 		fmt.Fprintln(os.Stderr, "move: Destination required")
 		return
 	}
+
 	if len(c.PositionalArgs) == 1 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to move all torrents")
 		return
 	}
+
 	fnames, destination := getFnamesAndDest(c.PositionalArgs)
 	ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
 		if !c.CommonOptions.DryRun {

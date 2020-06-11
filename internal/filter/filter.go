@@ -1,6 +1,9 @@
 package filter
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/hekmon/transmissionrpc"
 )
 
@@ -38,6 +41,7 @@ func New(opts Options) *Instance {
 		Args: make([]string, 0),
 	}
 	argsSet := make(map[string]struct{})
+
 	for _, i := range filter.filterFuncs {
 		if set(i.set) {
 			for _, arg := range i.args {
@@ -45,9 +49,11 @@ func New(opts Options) *Instance {
 			}
 		}
 	}
+
 	for v := range argsSet {
 		filter.Args = append(filter.Args, v)
 	}
+
 	return &filter
 }
 
@@ -55,13 +61,18 @@ func set(set interface{}) bool {
 	switch v := set.(type) {
 	case *bool:
 		return *v
+	default:
+		fmt.Fprintln(os.Stderr, "Fatal internal error: unknown filter type")
+		os.Exit(1)
 	}
+
 	return false
 }
 
 // CheckFilter checks if the supplied torrent matches after filters.
 func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 	match := true
+
 	for _, fi := range f.filterFuncs {
 		switch v := fi.set.(type) {
 		case *bool:
@@ -70,5 +81,6 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 			}
 		}
 	}
+
 	return match
 }

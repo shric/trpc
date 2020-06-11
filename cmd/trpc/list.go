@@ -13,14 +13,28 @@ import (
 	"github.com/hekmon/transmissionrpc"
 )
 
-func format(torrent *torrent.Torrent, conf *config.Config) string {
-	format := `{{printf "%4v" .ID}} {{.Error}} {{printf "%6.1f" .Percent}}%  {{printf "%12s" .Size}} {{printf "%-8s" .Eta}} {{printf "%7.1f" .Up}} {{printf "%7.1f" .Down}} {{printf "%6.1f" .Ratio}} {{printf "%-6s" .Priority}}  {{printf "%-4s" .Trackershortname}}  {{.Name}}`
+func format(torrent *torrent.Torrent, _ *config.Config) string {
+	format := `{{printf "%4v" .ID}} ` +
+		`{{.Error}} ` +
+		`{{printf "%6.1f" .Percent}}%  ` +
+		`{{printf "%12s" .Size}} ` +
+		`{{printf "%-8s" .Eta}} ` +
+		`{{printf "%7.1f" .Up}} ` +
+		`{{printf "%7.1f" .Down}} ` +
+		`{{printf "%6.1f" .Ratio}} ` +
+		`{{printf "%-6s" .Priority}}  ` +
+		`{{printf "%-4s" .Trackershortname}}  ` +
+		`{{.Name}}`
+
 	var tpl bytes.Buffer
+
 	tmpl := template.Must(template.New("list").Parse(format))
+
 	err := tmpl.Execute(&tpl, torrent)
 	if err != nil {
 		os.Exit(1)
 	}
+
 	return tpl.String()
 }
 
@@ -34,12 +48,17 @@ type ListOptions struct {
 func List(c *Command) {
 	opts, ok := c.CommandOptions.(ListOptions)
 	optionsCheck(ok)
+
 	var total torrent.Torrent
+
 	total.Error = " "
+
 	conf := config.ReadConfig()
+
 	if c.CommonOptions.DryRun {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on list as list doesn't change state")
 	}
+
 	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
@@ -54,6 +73,7 @@ func List(c *Command) {
 		formattedTorrent := format(result, conf)
 		fmt.Println(formattedTorrent)
 	})
+
 	formattedTotal := format(&total, conf)
 	fmt.Println(formattedTotal)
 }

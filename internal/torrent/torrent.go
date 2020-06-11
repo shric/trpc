@@ -16,13 +16,25 @@ type unitMap struct {
 	Name   string
 }
 
+const (
+	_ = 1 << (10 * iota)
+	KiB
+	MiB
+	GiB
+	TiB
+	PiB
+	EiB
+)
+
 func (torrent Torrent) eta() string {
 	if *torrent.original.LeftUntilDone == 0 {
 		return "Done"
 	}
+
 	if *torrent.original.Eta == -1 {
 		return "Unknown"
 	}
+
 	units := []unitMap{
 		{86400 * 365.25, "years"},
 		{86400 * 365.25 / 12, "months"},
@@ -31,12 +43,15 @@ func (torrent Torrent) eta() string {
 		{3600, "hours"},
 		{60, "mins"},
 	}
+
 	eta := float64(*torrent.original.Eta)
+
 	for _, u := range units {
 		if eta > u.Amount*3 {
 			return fmt.Sprintf("%d %s", int(eta/u.Amount), u.Name)
 		}
 	}
+
 	return fmt.Sprintf("%d secs", int64(eta))
 }
 
@@ -48,12 +63,13 @@ func (torrent Torrent) progress() float64 {
 	if *torrent.original.RecheckProgress != 0 {
 		return 100.0 * *torrent.original.RecheckProgress
 	}
-	return 100.0 * float64(torrent.have()) / float64(torrent.original.SizeWhenDone.Byte())
+
+	return 100.0 * float64(torrent.have()) / torrent.original.SizeWhenDone.Byte()
 }
 
 func (torrent Torrent) ratio() float64 {
 	// Returns +Inf on positive/0 or NaN on 0/0.
-	return float64(*torrent.original.UploadedEver) / float64(torrent.original.SizeWhenDone.Byte())
+	return float64(*torrent.original.UploadedEver) / torrent.original.SizeWhenDone.Byte()
 }
 
 func (torrent Torrent) priority() string {
@@ -74,30 +90,35 @@ func (torrent Torrent) trackershortname(conf *config.Config) string {
 			}
 		}
 	}
+
 	return "UNK"
 }
 
 // NewFrom takes a transmissionrpc Torrent and provides useful human readable fields.
-func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Config) (torrent *Torrent) {
-	torrent = &Torrent{}
-	torrent.original = transmissionrpcTorrent
-	torrent.ID = *torrent.original.ID
-	torrent.Name = *torrent.original.Name
-	torrent.Size = *torrent.original.SizeWhenDone
-	torrent.Status = *torrent.original.Status
-	torrent.LeftUntilDone = *torrent.original.LeftUntilDone
-	torrent.Error = " "
+func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Config) *Torrent {
+	torrent := &Torrent{
+		original:      transmissionrpcTorrent,
+		ID:            *transmissionrpcTorrent.ID,
+		Name:          *transmissionrpcTorrent.Name,
+		Size:          *transmissionrpcTorrent.SizeWhenDone,
+		Status:        *transmissionrpcTorrent.Status,
+		LeftUntilDone: *transmissionrpcTorrent.LeftUntilDone,
+		Error:         " ",
+	}
+
 	if *torrent.original.Error != 0 {
 		torrent.Error = "*"
 	}
+
 	torrent.Percent = torrent.progress()
 	torrent.Eta = torrent.eta()
-	torrent.Up = float64(*torrent.original.RateUpload) / 1024.0
-	torrent.Down = float64(*torrent.original.RateDownload) / 1024.0
+	torrent.Up = float64(*torrent.original.RateUpload) / float64(KiB)
+	torrent.Down = float64(*torrent.original.RateDownload) / float64(KiB)
 	torrent.Ratio = torrent.ratio()
 	torrent.Priority = torrent.priority()
 	torrent.Trackershortname = torrent.trackershortname(conf)
-	return
+
+	return torrent
 }
 
 // Torrent contains all the fields of transmissionrpc.Torrent but with non-pointer values

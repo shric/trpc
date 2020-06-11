@@ -8,14 +8,14 @@ import (
 )
 
 type options struct {
-	Common  cmd.CommonOptions `group:"global options"`
-	List    cmd.ListOptions   `command:"list" alias:"l" description:"List torrents"`
 	Add     cmd.AddOptions    `command:"add" alias:"a" description:"Add torrents"`
+	List    cmd.ListOptions   `command:"list" alias:"l" description:"List torrents"`
+	Move    cmd.MoveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Rm      cmd.RmOptions     `command:"rm" alias:"r" description:"Remove torrents"`
 	Start   cmd.StartOptions  `command:"start" description:"Start torrents"`
 	Stop    cmd.StopOptions   `command:"stop" description:"Start torrents"`
 	Verify  cmd.VerifyOptions `command:"verify" alias:"hash" description:"Verify torrents (hash check)"`
-	Move    cmd.MoveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
+	Common  cmd.CommonOptions `group:"global options"`
 	Version struct{}          `command:"version" description:"Print version"`
 }
 
@@ -24,9 +24,11 @@ func main() {
 
 	p := flags.NewParser(args, flags.Default)
 	remaining, err := p.Parse()
+
 	if err != nil {
 		os.Exit(1)
 	}
+
 	client := Connect()
 
 	map[string]*cmd.Command{

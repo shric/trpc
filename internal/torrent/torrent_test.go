@@ -1,4 +1,4 @@
-package torrent
+package torrent_test
 
 import (
 	"math"
@@ -8,9 +8,12 @@ import (
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/config"
+	"github.com/shric/trpc/internal/torrent"
 )
 
-func makeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64, LeftUntilDone int64, UploadedEver int64, Tracker string, Error int64) (torrent *Torrent) {
+func makeTorrent(sizeWhenDone cunits.Bits, eta int64, recheckProgress float64, leftUntilDone int64,
+	uploadedEver int64, tracker string, error int64,
+) *torrent.Torrent {
 	ID := int64(1)
 	Name := "Torrent 1"
 	RateUpload := int64(0)
@@ -18,20 +21,20 @@ func makeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64, L
 	BandwidthPriority := int64(0)
 	Status := transmissionrpc.TorrentStatus(0)
 	Trackers := []*transmissionrpc.Tracker{
-		{Announce: Tracker},
+		{Announce: tracker},
 	}
 	trpcTorrent := transmissionrpc.Torrent{
-		SizeWhenDone:      &SizeWhenDone,
+		SizeWhenDone:      &sizeWhenDone,
 		ID:                &ID,
 		Name:              &Name,
-		Error:             &Error,
-		Eta:               &Eta,
+		Error:             &error,
+		Eta:               &eta,
 		RateUpload:        &RateUpload,
 		RateDownload:      &RateDownload,
-		RecheckProgress:   &RecheckProgress,
-		LeftUntilDone:     &LeftUntilDone,
+		RecheckProgress:   &recheckProgress,
+		LeftUntilDone:     &leftUntilDone,
 		Status:            &Status,
-		UploadedEver:      &UploadedEver,
+		UploadedEver:      &uploadedEver,
 		BandwidthPriority: &BandwidthPriority,
 		Trackers:          Trackers,
 	}
@@ -40,12 +43,12 @@ func makeTorrent(SizeWhenDone cunits.Bits, Eta int64, RecheckProgress float64, L
 			"foo-tracker": "foo",
 		},
 	}
-	torrent = NewFrom(&trpcTorrent, &conf)
-	return
+
+	return torrent.NewFrom(&trpcTorrent, &conf)
 }
 
 type test struct {
-	input *Torrent
+	input *torrent.Torrent
 	want  interface{}
 }
 

@@ -18,21 +18,23 @@ type StartOptions struct {
 func Start(c *Command) {
 	opts, ok := c.CommandOptions.(StartOptions)
 	optionsCheck(ok)
+
 	startFunc := c.Client.TorrentStartIDs
 
 	if opts.Now {
 		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		if !c.CommonOptions.DryRun {
-			err := startFunc([]int64{*torrent.ID})
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+		func(torrent *transmissionrpc.Torrent) {
+			if !c.CommonOptions.DryRun {
+				err := startFunc([]int64{*torrent.ID})
+				if err != nil {
+					fmt.Fprintln(os.Stderr, err)
+				}
 			}
-		}
-		c.status("Started torrent", torrent)
-	})
+			c.status("Started torrent", torrent)
+		})
 }
 
 // StopOptions is all the command line options for the stop command.
@@ -44,13 +46,14 @@ type StopOptions struct {
 func Stop(c *Command) {
 	opts, ok := c.CommandOptions.(StopOptions)
 	optionsCheck(ok)
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		if !c.CommonOptions.DryRun {
-			err := c.Client.TorrentStopIDs([]int64{*torrent.ID})
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+		func(torrent *transmissionrpc.Torrent) {
+			if !c.CommonOptions.DryRun {
+				err := c.Client.TorrentStopIDs([]int64{*torrent.ID})
+				if err != nil {
+					fmt.Fprintln(os.Stderr, err)
+				}
 			}
-		}
-		c.status("Stopped torrent", torrent)
-	})
+			c.status("Stopped torrent", torrent)
+		})
 }

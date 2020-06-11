@@ -19,21 +19,24 @@ type RmOptions struct {
 func Rm(c *Command) {
 	opts, ok := c.CommandOptions.(RmOptions)
 	optionsCheck(ok)
+
 	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to delete all torrents!")
 		return
 	}
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
-		if !c.CommonOptions.DryRun {
-			err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
-				IDs:             []int64{*torrent.ID},
-				DeleteLocalData: opts.Nuke,
-			})
-			if err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				return
+
+	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+		func(torrent *transmissionrpc.Torrent) {
+			if !c.CommonOptions.DryRun {
+				err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{
+					IDs:             []int64{*torrent.ID},
+					DeleteLocalData: opts.Nuke,
+				})
+				if err != nil {
+					fmt.Fprintln(os.Stderr, err)
+					return
+				}
 			}
-		}
-		c.status("Removed torrent", torrent)
-	})
+			c.status("Removed torrent", torrent)
+		})
 }
