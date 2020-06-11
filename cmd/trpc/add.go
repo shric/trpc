@@ -18,8 +18,10 @@ func Add(c *Command) {
 	opts, ok := c.CommandOptions.(AddOptions)
 	optionsCheck(ok)
 
-	// This silences G601: Implicit memory aliasing in for loop. (gosec)
+	// These silence G601: Implicit memory aliasing in for loop. (gosec)
 	var argCopy string
+
+	var dummyID int64
 
 	for _, arg := range c.PositionalArgs {
 		var torrent *transmissionrpc.Torrent
@@ -50,10 +52,11 @@ func Add(c *Command) {
 			torrent, err = c.Client.TorrentAdd(&payload)
 		} else {
 			// Fill it with something for dry-run
-			dummyID := int64(0)
+			dummyID = 0
+			argCopy = arg
 			torrent = &transmissionrpc.Torrent{
 				ID:   &dummyID,
-				Name: &arg}
+				Name: &argCopy}
 		}
 
 		if err != nil {
