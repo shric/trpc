@@ -48,6 +48,12 @@ func Add(c *Command) {
 
 		if !c.CommonOptions.DryRun {
 			torrent, err = c.Client.TorrentAdd(&payload)
+		} else {
+			// Fill it with something for dry-run
+			dummyID := int64(0)
+			torrent = &transmissionrpc.Torrent{
+				ID:   &dummyID,
+				Name: &arg}
 		}
 
 		if err != nil {
