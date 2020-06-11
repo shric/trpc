@@ -4,7 +4,7 @@ import (
 	"github.com/hekmon/transmissionrpc"
 )
 
-// Options declares all the command line arguments for filtering torrents
+// Options declares all the command line arguments for filtering torrents.
 type Options struct {
 	Incomplete bool `short:"i" long:"incomplete" description:"only incomplete torrents"`
 }

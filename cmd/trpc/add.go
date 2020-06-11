@@ -8,12 +8,12 @@ import (
 	"github.com/hekmon/transmissionrpc"
 )
 
-// AddOptions is all the command line options for the add command
+// AddOptions is all the command line options for the add command.
 type AddOptions struct {
 	Paused bool `short:"p" long:"paused" description:"add torrent paused"`
 }
 
-// Add adds a new torrent by URL or file
+// Add adds a new torrent by URL or file.
 func Add(c *Command) {
 	opts, ok := c.CommandOptions.(AddOptions)
 	optionsCheck(ok)
@@ -48,6 +48,5 @@ func Add(c *Command) {
 		} else {
 			c.status("Added torrent with ID", torrent)
 		}
-
 	}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-// MoveOptions is all the command line options for the verify command
+// MoveOptions is all the command line options for the verify command.
 type MoveOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really move all torrents"`
@@ -20,7 +20,7 @@ func getFnamesAndDest(args []string) (fnames []string, dest string) {
 	return
 }
 
-// Move implements the verify command (hash check torrents)
+// Move implements the verify command (hash check torrents).
 func Move(c *Command) {
 	opts, ok := c.CommandOptions.(MoveOptions)
 	optionsCheck(ok)

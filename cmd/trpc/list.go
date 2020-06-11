@@ -30,7 +30,7 @@ type ListOptions struct {
 	NoTotals       bool `short:"n" long:"no-totals" description:"suppress output of totals"`
 }
 
-// List provides a list of all or selected torrents
+// List provides a list of all or selected torrents.
 func List(c *Command) {
 	opts, ok := c.CommandOptions.(ListOptions)
 	optionsCheck(ok)

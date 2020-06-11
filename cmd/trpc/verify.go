@@ -8,7 +8,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-// VerifyOptions is all the command line options for the verify command
+// VerifyOptions is all the command line options for the verify command.
 type VerifyOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really verify all torrents"`

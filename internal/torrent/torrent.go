@@ -77,7 +77,7 @@ func (torrent Torrent) trackershortname(conf *config.Config) string {
 	return "UNK"
 }
 
-// NewFrom takes a transmissionrpc Torrent and provides useful human readable fields
+// NewFrom takes a transmissionrpc Torrent and provides useful human readable fields.
 func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Config) (torrent *Torrent) {
 	torrent = &Torrent{}
 	torrent.original = transmissionrpcTorrent

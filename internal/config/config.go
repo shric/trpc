@@ -9,12 +9,12 @@ import (
 	"github.com/pelletier/go-toml"
 )
 
-// Config contains all the external configuration data from .trpc.conf
+// Config contains all the external configuration data from .trpc.conf.
 type Config struct {
 	Trackernames map[string]string
 }
 
-// ReadConfig attempts to read ~/.trpc.conf as a toml file and returns a config tree
+// ReadConfig attempts to read ~/.trpc.conf as a toml file and returns a config tree.
 func ReadConfig() (c *Config) {
 	var TomlConfig *toml.Tree
 

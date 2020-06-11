@@ -8,7 +8,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-// StartOptions is all the command line options for the stop command
+// StartOptions is all the command line options for the stop command.
 type StartOptions struct {
 	Now            bool `long:"now" short:"n" description:"Start torrent now, bypassing the queue"`
 	filter.Options `group:"filters"`
@@ -35,7 +35,7 @@ func Start(c *Command) {
 	})
 }
 
-// StopOptions is all the command line options for the stop command
+// StopOptions is all the command line options for the stop command.
 type StopOptions struct {
 	filter.Options `group:"filters"`
 }

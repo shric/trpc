@@ -10,7 +10,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-// Command holds everything needed to run a command
+// Command holds everything needed to run a command.
 type Command struct {
 	CommandOptions interface{}
 	PositionalArgs []string
@@ -25,7 +25,7 @@ func (c *Command) Run() {
 	}
 }
 
-// NewCommand returns a Command
+// NewCommand returns a Command.
 func NewCommand(runner func(c *Command), commandOptions interface{},
 	positionalArgs []string, commonOptions CommonOptions,
 	client *transmissionrpc.Client) (command *Command) {
@@ -36,7 +36,6 @@ func NewCommand(runner func(c *Command), commandOptions interface{},
 		Client:         client,
 		Runner:         runner,
 	}
-
 }
 
 // CommonOptions declares command line arguments that apply to all or most

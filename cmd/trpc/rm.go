@@ -8,7 +8,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-// RmOptions is all the command line options for the rm command
+// RmOptions is all the command line options for the rm command.
 type RmOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really allow all torrents to be removed"`
