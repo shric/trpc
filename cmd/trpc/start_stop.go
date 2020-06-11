@@ -10,8 +10,8 @@ import (
 
 // StartOptions is all the command line options for the stop command.
 type StartOptions struct {
-	Now            bool `long:"now" short:"n" description:"Start torrent now, bypassing the queue"`
 	filter.Options `group:"filters"`
+	Now            bool `long:"now" description:"Start torrent now, bypassing the queue"`
 }
 
 // Start starts torrents.
