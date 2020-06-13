@@ -32,14 +32,24 @@ func main() {
 
 	client := Connect()
 
-	map[string]*cmd.Command{
-		"verify":  cmd.NewCommand(cmd.Verify, args.Verify, remaining, args.Common, client),
-		"rm":      cmd.NewCommand(cmd.Rm, args.Rm, remaining, args.Common, client),
-		"start":   cmd.NewCommand(cmd.Start, args.Start, remaining, args.Common, client),
-		"stop":    cmd.NewCommand(cmd.Stop, args.Stop, remaining, args.Common, client),
-		"add":     cmd.NewCommand(cmd.Add, args.Add, remaining, args.Common, client),
-		"list":    cmd.NewCommand(cmd.List, args.List, remaining, args.Common, client),
-		"version": cmd.NewCommand(cmd.Version, args.Version, remaining, args.Common, client),
-		"move":    cmd.NewCommand(cmd.Move, args.Move, remaining, args.Common, client),
-	}[p.Active.Name].Run()
+	commandInstances := map[string]cmd.CommandInstance{
+		"verify":  {Runner: cmd.Verify, Options: args.Verify},
+		"errors":  {Runner: cmd.Errors, Options: args.Errors},
+		"rm":      {Runner: cmd.Rm, Options: args.Rm},
+		"start":   {Runner: cmd.Start, Options: args.Start},
+		"stop":    {Runner: cmd.Stop, Options: args.Stop},
+		"add":     {Runner: cmd.Add, Options: args.Add},
+		"list":    {Runner: cmd.List, Options: args.List},
+		"version": {Runner: cmd.Version, Options: args.Version},
+		"move":    {Runner: cmd.Move, Options: args.Move},
+	}
+
+	command := &cmd.Command{
+		PositionalArgs: remaining,
+		CommonOptions:  args.Common,
+		Client:         client,
+	}
+
+	command.CommandInstance = commandInstances[p.Active.Name]
+	command.Run()
 }

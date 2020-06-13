@@ -15,7 +15,7 @@ type ErrorsOptions struct {
 
 // Errors provides a list of all or selected torrents.
 func Errors(c *Command) {
-	opts, ok := c.CommandOptions.(ErrorsOptions)
+	opts, ok := c.Options.(ErrorsOptions)
 	optionsCheck(ok)
 
 	if c.CommonOptions.DryRun {

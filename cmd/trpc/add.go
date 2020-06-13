@@ -15,7 +15,7 @@ type AddOptions struct {
 
 // Add adds a new torrent by URL or file.
 func Add(c *Command) {
-	opts, ok := c.CommandOptions.(AddOptions)
+	opts, ok := c.Options.(AddOptions)
 	optionsCheck(ok)
 
 	// These silence G601: Implicit memory aliasing in for loop. (gosec)

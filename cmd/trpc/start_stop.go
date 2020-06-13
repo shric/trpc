@@ -16,7 +16,7 @@ type StartOptions struct {
 
 // Start starts torrents.
 func Start(c *Command) {
-	opts, ok := c.CommandOptions.(StartOptions)
+	opts, ok := c.Options.(StartOptions)
 	optionsCheck(ok)
 
 	startFunc := c.Client.TorrentStartIDs
@@ -44,7 +44,7 @@ type StopOptions struct {
 
 // Stop stops torrents.
 func Stop(c *Command) {
-	opts, ok := c.CommandOptions.(StopOptions)
+	opts, ok := c.Options.(StopOptions)
 	optionsCheck(ok)
 	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
 		func(torrent *transmissionrpc.Torrent) {

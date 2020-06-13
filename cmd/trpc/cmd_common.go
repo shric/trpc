@@ -10,32 +10,26 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
+// CommandInstance is the data specific to one command.
+type CommandInstance struct {
+	Options interface{}
+	Runner  func(c *Command)
+}
+
 // Command holds everything needed to run a command.
 type Command struct {
-	CommandOptions interface{}
 	PositionalArgs []string
 	CommonOptions  CommonOptions
 	Client         *transmissionrpc.Client
-	Runner         func(c *Command)
+	CommandInstance
 }
 
 // Run is a simple wrapper to call the runner function of a command.
 func (c *Command) Run() {
-	if c != nil {
+	if c.Runner != nil {
 		c.Runner(c)
-	}
-}
-
-// NewCommand returns a Command.
-func NewCommand(runner func(c *Command), commandOptions interface{},
-	positionalArgs []string, commonOptions CommonOptions,
-	client *transmissionrpc.Client) (command *Command) {
-	return &Command{
-		CommandOptions: commandOptions,
-		PositionalArgs: positionalArgs,
-		CommonOptions:  commonOptions,
-		Client:         client,
-		Runner:         runner,
+	} else {
+		fmt.Fprintln(os.Stderr, "Fatal internal error: command not implemented")
 	}
 }
 

@@ -46,7 +46,7 @@ type ListOptions struct {
 
 // List provides a list of all or selected torrents.
 func List(c *Command) {
-	opts, ok := c.CommandOptions.(ListOptions)
+	opts, ok := c.Options.(ListOptions)
 	optionsCheck(ok)
 
 	var total torrent.Torrent

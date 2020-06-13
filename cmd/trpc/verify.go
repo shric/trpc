@@ -16,7 +16,7 @@ type VerifyOptions struct {
 
 // Verify is a command that verifies (hash checks) the selected torrents.
 func Verify(c *Command) {
-	opts, ok := c.CommandOptions.(VerifyOptions)
+	opts, ok := c.Options.(VerifyOptions)
 	optionsCheck(ok)
 
 	if len(c.PositionalArgs) == 0 && !opts.ForceAll {

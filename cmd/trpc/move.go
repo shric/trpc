@@ -23,7 +23,7 @@ func getFnamesAndDest(args []string) (fnames []string, dest string) {
 
 // Move implements the verify command (hash check torrents).
 func Move(c *Command) {
-	opts, ok := c.CommandOptions.(MoveOptions)
+	opts, ok := c.Options.(MoveOptions)
 	optionsCheck(ok)
 
 	if len(c.PositionalArgs) == 0 {

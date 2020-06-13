@@ -17,7 +17,7 @@ type RmOptions struct {
 
 // Rm implements the rm command.
 func Rm(c *Command) {
-	opts, ok := c.CommandOptions.(RmOptions)
+	opts, ok := c.Options.(RmOptions)
 	optionsCheck(ok)
 
 	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
