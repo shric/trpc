@@ -46,9 +46,11 @@ trpc start ~/torrent/foo/*
 
 `version`: show version
 
+`which`: show which torrents (and file ID) given file(s) belong to.
+
 ### Filters
 
-All commands above except for `add` and `version` accept filter arguments to limit the torrents acted upon (or displayed in the case of `list`):
+Most commands above except for `add`, `version` and `which` accept filter arguments to limit the torrents acted upon (or displayed in the case of `list`):
 
 `-i, --incomplete`: Include only incomplete torrents
 
@@ -80,8 +82,6 @@ $ trpc stop --incomplete ~/torrent/recent/*
 
 `watch`: Show a progress bar for incomplete active torrents
 
-`which`: Identify which torrent a file belongs to
-
 ### More filters
 
 * `-t, --tracker`: Select only torrents using a particular tracker
@@ -110,17 +110,18 @@ go install github.com/shric/trpc/cmd/trpc
 
 ## More usage examples
 
-| trpc                    | transmission-remote analogue (if present)         | Description                                  |
-| ----------------------- | ------------------------------------------------- | -------------------------------------------- |
-| trpc -h                 | transmission-remote -h                            | Show help                                    |
-| trpc list               | transmission-remote -l                            | List all torrents                            |
-| trpc list -i            |                                                   | List all incomplete torrents                 |
-| trpc rm 123 456         | transmission-remote -t 123,456 -r                 | Remove torrents with IDs 123 and 456         |
-| trpc rm --nuke 123      | transmission-remote -t 123 -rad                   | Remove torrent + data with ID 123            |
-| trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL)     |
-| trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state              |
-| trpc rm -i --force-all  |                                                   | Remove all incomplete torrents               |
-| trpc start 123          | transmission-remote -t 123 -s                     | Start torrent 123                            |
-| trpc start --now 123    |                                                   | Start torrent 123 (bypass queue)             |
-| trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                             |
-| trpc list *             |                                                   | List all running torrents in the current dir |
+| trpc                    | transmission-remote analogue (if present)         | Description                                    |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------- |
+| trpc -h                 | transmission-remote -h                            | Show help                                      |
+| trpc list               | transmission-remote -l                            | List all torrents                              |
+| trpc list -i            |                                                   | List all incomplete torrents                   |
+| trpc rm 123 456         | transmission-remote -t 123,456 -r                 | Remove torrents with IDs 123 and 456           |
+| trpc rm --nuke 123      | transmission-remote -t 123 -rad                   | Remove torrent + data with ID 123              |
+| trpc add foo.torrent    | transmission-remote -a foo.torrent                | Add foo.torrent (can be filename or URL)       |
+| trpc add -p foo.torrent | transmission-remote -a --start-paused foo.torrent | Add foo.torrent in paused state                |
+| trpc rm -i --force-all  |                                                   | Remove all incomplete torrents                 |
+| trpc start 123          | transmission-remote -t 123 -s                     | Start torrent 123                              |
+| trpc start --now 123    |                                                   | Start torrent 123 (bypass queue)               |
+| trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                               |
+| trpc list *             |                                                   | List all running torrents in the current dir   |
+| trpc which filename.iso |                                                   | Identify which torrent filename.iso belongs to |

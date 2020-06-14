@@ -6,10 +6,10 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
+	"github.com/shric/trpc/internal/torrent"
 )
 
-// MoveOptions is all the command line options for the verify command.
-type MoveOptions struct {
+type moveOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really move all torrents"`
 }
@@ -23,7 +23,7 @@ func getFnamesAndDest(args []string) (fnames []string, dest string) {
 
 // Move implements the verify command (hash check torrents).
 func Move(c *Command) {
-	opts, ok := c.Options.(MoveOptions)
+	opts, ok := c.Options.(moveOptions)
 	optionsCheck(ok)
 
 	if len(c.PositionalArgs) == 0 {
@@ -37,7 +37,7 @@ func Move(c *Command) {
 	}
 
 	fnames, destination := getFnamesAndDest(c.PositionalArgs)
-	ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+	torrent.ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSetLocation(*torrent.ID, destination, true)
 			if err != nil {

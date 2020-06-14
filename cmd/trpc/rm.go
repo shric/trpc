@@ -6,10 +6,10 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
+	"github.com/shric/trpc/internal/torrent"
 )
 
-// RmOptions is all the command line options for the rm command.
-type RmOptions struct {
+type rmOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really allow all torrents to be removed"`
 	Nuke           bool `long:"nuke" description:"Delete the data associated with the torrent"`
@@ -17,7 +17,7 @@ type RmOptions struct {
 
 // Rm implements the rm command.
 func Rm(c *Command) {
-	opts, ok := c.Options.(RmOptions)
+	opts, ok := c.Options.(rmOptions)
 	optionsCheck(ok)
 
 	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
@@ -25,7 +25,7 @@ func Rm(c *Command) {
 		return
 	}
 
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{

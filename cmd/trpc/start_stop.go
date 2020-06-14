@@ -6,17 +6,17 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
+	"github.com/shric/trpc/internal/torrent"
 )
 
-// StartOptions is all the command line options for the stop command.
-type StartOptions struct {
+type startOptions struct {
 	filter.Options `group:"filters"`
 	Now            bool `long:"now" description:"Start torrent now, bypassing the queue"`
 }
 
 // Start starts torrents.
 func Start(c *Command) {
-	opts, ok := c.Options.(StartOptions)
+	opts, ok := c.Options.(startOptions)
 	optionsCheck(ok)
 
 	startFunc := c.Client.TorrentStartIDs
@@ -25,7 +25,7 @@ func Start(c *Command) {
 		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := startFunc([]int64{*torrent.ID})
@@ -37,16 +37,15 @@ func Start(c *Command) {
 		})
 }
 
-// StopOptions is all the command line options for the stop command.
-type StopOptions struct {
+type stopOptions struct {
 	filter.Options `group:"filters"`
 }
 
 // Stop stops torrents.
 func Stop(c *Command) {
-	opts, ok := c.Options.(StopOptions)
+	opts, ok := c.Options.(stopOptions)
 	optionsCheck(ok)
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := c.Client.TorrentStopIDs([]int64{*torrent.ID})

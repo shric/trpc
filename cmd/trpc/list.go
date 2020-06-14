@@ -38,15 +38,14 @@ func format(torrent *torrent.Torrent, _ *config.Config) string {
 	return tpl.String()
 }
 
-// ListOptions defines all the command line options for list.
-type ListOptions struct {
+type listOptions struct {
 	filter.Options `group:"filters"`
 	NoTotals       bool `short:"n" long:"no-totals" description:"suppress output of totals"`
 }
 
 // List provides a list of all or selected torrents.
 func List(c *Command) {
-	opts, ok := c.Options.(ListOptions)
+	opts, ok := c.Options.(listOptions)
 	optionsCheck(ok)
 
 	var total torrent.Torrent
@@ -59,7 +58,7 @@ func List(c *Command) {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on list as list doesn't change state")
 	}
 
-	ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
+	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
 		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
 		"status", "trackers", "bandwidthPriority", "uploadedEver",
