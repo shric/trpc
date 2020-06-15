@@ -26,6 +26,7 @@ func getIncompleteDir(client *transmissionrpc.Client) *string {
 	session, err := client.SessionArgumentsGet()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
 	if !*session.IncompleteDirEnabled {
@@ -108,6 +109,7 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 		return
 	}
 

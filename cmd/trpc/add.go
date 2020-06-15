@@ -60,6 +60,7 @@ func Add(c *Command) {
 
 		if err != nil {
 			fmt.Println("Add: err: ", err)
+			os.Exit(1)
 		} else {
 			c.status("Added torrent with ID", torrent)
 		}
