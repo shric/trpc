@@ -3,6 +3,7 @@ package torrent
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 
 	"github.com/shric/trpc/internal/config"
@@ -15,6 +16,10 @@ type unitMap struct {
 	Amount float64
 	Name   string
 }
+
+const (
+	trackershortnameLen = 3
+)
 
 // Constants for binary units.
 const (
@@ -84,12 +89,24 @@ func (torrent Torrent) priority() string {
 }
 
 func (torrent Torrent) trackershortname(conf *config.Config) string {
+	firstTracker := torrent.original.Trackers[0].Announce
+
 	for _, url := range torrent.original.Trackers {
 		for match, shortname := range conf.Trackernames {
 			if strings.Contains(url.Announce, match) {
 				return shortname
 			}
 		}
+	}
+
+	url, err := url.Parse(firstTracker)
+	if err != nil {
+		return "UNK"
+	}
+
+	hostname := url.Hostname()
+	if len(hostname) >= trackershortnameLen {
+		return url.Hostname()[0:trackershortnameLen]
 	}
 
 	return "UNK"

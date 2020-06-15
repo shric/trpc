@@ -27,7 +27,11 @@ func ReadConfig() *Config {
 		return nil
 	}
 
-	TomlConfig, _ = toml.LoadFile(path.Join(usr.HomeDir, ".trpc.conf"))
+	TomlConfig, err = toml.LoadFile(path.Join(usr.HomeDir, ".trpc.conf"))
+	if err != nil {
+		return c
+	}
+
 	tnames := TomlConfig.Get("trackernames").(*toml.Tree)
 
 	for _, shortname := range tnames.Keys() {
