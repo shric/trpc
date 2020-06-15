@@ -7,6 +7,7 @@ import (
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
 	"github.com/shric/trpc/internal/torrent"
+	"github.com/shric/trpc/internal/utils"
 )
 
 type moveOptions struct {
@@ -15,7 +16,7 @@ type moveOptions struct {
 }
 
 func getFnamesAndDest(args []string) (fnames []string, dest string) {
-	dest = args[len(args)-1]
+	dest = utils.RealPath(args[len(args)-1])
 	fnames = args[:len(args)-1]
 
 	return
