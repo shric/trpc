@@ -8,19 +8,15 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
+	"github.com/shric/trpc/internal/utils"
 )
 
 func getAbsoluteFnames(fnames []string) (absoluteFnames map[string]int64) {
 	absoluteFnames = make(map[string]int64)
 
 	for _, fn := range fnames {
-		absolutePath, err := filepath.Abs(fn)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			return
-		}
-
-		absoluteFnames[absolutePath] = -1
+		realPath := utils.RealPath(fn)
+		absoluteFnames[realPath] = -1
 	}
 
 	return
