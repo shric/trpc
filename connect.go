@@ -74,7 +74,8 @@ func Connect() *transmissionrpc.Client {
 	}
 
 	if !ok {
-		panic(fmt.Sprintf("Remote transmission RPC version (v%d) is incompatible with the transmission library (v%d): remote needs at least v%d",
+		panic(fmt.Sprintf(
+			"Remote transmission RPC version (v%d) is incompatible with the transmission library (v%d): remote needs at least v%d",
 			serverVersion, transmissionrpc.RPCVersion, serverMinimumVersion))
 	}
 

@@ -109,6 +109,7 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 	if len(ids) == 0 && len(args) > 0 {
 		os.Exit(1)
 	}
+
 	torrents, err := client.TorrentGet(fields, ids)
 
 	if err != nil {
