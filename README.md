@@ -36,6 +36,8 @@ trpc start ~/torrent/foo/*
 
 `move`: move torrents to another location
 
+`rename`: Rename a torrent path or file
+
 `rm`: remove torrents (--nuke to delete the data as well as the torrent)
 
 `start`: start torrents (--now to jump queue)
@@ -77,8 +79,6 @@ $ trpc stop --incomplete ~/torrent/recent/*
 `info`: Show detailed torrent info
 
 `sessioninfo`: Show session information
-
-`rename`: Rename the torrent path (without moving it to another downloadDir)
 
 `watch`: Show a progress bar for incomplete active torrents
 

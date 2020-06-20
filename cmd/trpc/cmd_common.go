@@ -20,6 +20,7 @@ type options struct {
 	Errors  errorsOptions `command:"errors" alias:"e" description:"Show torrent error strings"`
 	List    listOptions   `command:"list" alias:"l" description:"List torrents"`
 	Move    moveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
+	Rename  renameOptions `command:"rename" description:"Rename torrent file"`
 	Rm      rmOptions     `command:"rm" alias:"r" description:"Remove torrents"`
 	Start   startOptions  `command:"start" description:"Start torrents"`
 	Stop    stopOptions   `command:"stop" description:"Start torrents"`
@@ -58,6 +59,7 @@ func Run(client *transmissionrpc.Client) {
 		"errors":  {Runner: Errors, Options: args.Errors},
 		"list":    {Runner: List, Options: args.List},
 		"move":    {Runner: Move, Options: args.Move},
+		"rename":  {Runner: Rename, Options: args.Rename},
 		"rm":      {Runner: Rm, Options: args.Rm},
 		"start":   {Runner: Start, Options: args.Start},
 		"stop":    {Runner: Stop, Options: args.Stop},
