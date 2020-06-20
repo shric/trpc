@@ -105,12 +105,15 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 	}
 
 	ids = append(ids, getids(client, fnames)...)
+	// Something was specified as args but nothing could be converted to an ID.
+	if len(ids) == 0 && len(args) > 0 {
+		os.Exit(1)
+	}
 	torrents, err := client.TorrentGet(fields, ids)
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
-		return
 	}
 
 	for _, transmissionrpcTorrent := range torrents {
