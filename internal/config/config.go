@@ -12,6 +12,7 @@ import (
 // Config contains all the external configuration data from .trpc.conf.
 type Config struct {
 	Trackernames map[string]string
+	Settings     *toml.Tree
 }
 
 // ReadConfig attempts to read ~/.trpc.conf as a toml file and returns a config tree.
@@ -32,7 +33,13 @@ func ReadConfig() *Config {
 		return c
 	}
 
-	tnames := TomlConfig.Get("trackernames").(*toml.Tree)
+	trackernames := TomlConfig.Get("trackernames")
+
+	tnames := &toml.Tree{}
+
+	if trackernames != nil {
+		tnames = trackernames.(*toml.Tree)
+	}
 
 	for _, shortname := range tnames.Keys() {
 		trackers := tnames.Get(shortname)
@@ -48,5 +55,12 @@ func ReadConfig() *Config {
 		}
 	}
 
+	settings := TomlConfig.Get("settings")
+	if settings != nil {
+		c.Settings = settings.(*toml.Tree)
+	} else {
+		x := toml.Tree{}
+		c.Settings = &x
+	}
 	return c
 }

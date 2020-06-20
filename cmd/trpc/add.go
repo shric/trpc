@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/hekmon/transmissionrpc"
+	"github.com/shric/trpc/internal/config"
 	"github.com/shric/trpc/internal/utils"
 )
 
@@ -27,6 +28,11 @@ func Add(c *Command) {
 	if len(c.PositionalArgs) == 0 {
 		fmt.Fprintln(os.Stderr, "Please supply at least one file or URL")
 		os.Exit(1)
+	}
+
+	conf := config.ReadConfig()
+	if opts.DownloadDir == "" && conf.Settings.Has("default_download_dir") {
+		opts.DownloadDir = conf.Settings.Get("default_download_dir").(string)
 	}
 
 	for _, arg := range c.PositionalArgs {
