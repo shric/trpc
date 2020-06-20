@@ -6,10 +6,12 @@ import (
 	"os"
 
 	"github.com/hekmon/transmissionrpc"
+	"github.com/shric/trpc/internal/utils"
 )
 
 type addOptions struct {
-	Paused bool `short:"p" long:"paused" description:"add torrent paused"`
+	Paused      bool   `short:"p" long:"paused" description:"add torrent paused"`
+	DownloadDir string `short:"d" long:"download-dir" dscription:"download directory"`
 }
 
 // Add adds a new torrent by URL or file.
@@ -22,6 +24,11 @@ func Add(c *Command) {
 
 	var dummyID int64
 
+	if len(c.PositionalArgs) == 0 {
+		fmt.Fprintln(os.Stderr, "Please supply at least one file or URL")
+		os.Exit(1)
+	}
+
 	for _, arg := range c.PositionalArgs {
 		var torrent *transmissionrpc.Torrent
 
@@ -29,6 +36,11 @@ func Add(c *Command) {
 
 		payload := transmissionrpc.TorrentAddPayload{
 			Paused: &opts.Paused,
+		}
+
+		if opts.DownloadDir != "" {
+			realDownloadDir := utils.RealPath(opts.DownloadDir)
+			payload.DownloadDir = &realDownloadDir
 		}
 
 		// Assume it's a file.
