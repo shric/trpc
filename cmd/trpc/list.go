@@ -32,7 +32,7 @@ func format(torrent *torrent.Torrent, _ *config.Config) string {
 
 	err := tmpl.Execute(&tpl, torrent)
 	if err != nil {
-		os.Exit(1)
+		panic(err)
 	}
 
 	return tpl.String()
