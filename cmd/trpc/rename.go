@@ -30,16 +30,19 @@ func Rename(c *Command) {
 	newname := utils.RealPath(opts.Positional.Newname)
 
 	var torrent *transmissionrpc.Torrent
+
 	if opts.ID != 0 {
 		torrents, err := c.Client.TorrentGet([]string{"id", "downloadDir", "name"}, []int64{opts.ID})
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Torrent ID %d not found.", opts.ID)
+			fmt.Fprintf(os.Stderr, "Torrent ID %d not found.", opts.ID)
 			os.Exit(1)
 		}
+
 		torrent = torrents[0]
 	} else {
 		torrent, _ = finder.Find(oldname)
 	}
+
 	if torrent == nil {
 		fmt.Fprintln(os.Stderr, "Couldn't determine associated torrent from ", oldname)
 		os.Exit(1)

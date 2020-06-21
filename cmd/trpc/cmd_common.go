@@ -96,6 +96,7 @@ func (c *Command) statusf(format string, a ...interface{}) {
 	if c.CommonOptions.DryRun {
 		dryRun = "[dry run] "
 	}
+
 	fmt.Printf(dryRun+format+"\n", a...)
 }
 
