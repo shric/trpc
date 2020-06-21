@@ -62,5 +62,6 @@ func ReadConfig() *Config {
 		x := toml.Tree{}
 		c.Settings = &x
 	}
+
 	return c
 }
