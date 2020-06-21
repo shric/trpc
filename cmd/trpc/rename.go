@@ -6,28 +6,40 @@ import (
 	"path"
 	"strings"
 
+	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/torrent"
 	"github.com/shric/trpc/internal/utils"
 )
 
 type renameOptions struct {
+	ID         int64 `long:"torrent-id" short:"t" description:"Use this torrent ID instead of inferring from local filesystem"`
+	Positional struct {
+		Oldname string `positional-arg-name:"old" description:"the old name or ID of the torrent's path"`
+		Newname string `positional-arg-name:"new" description:"the new name of the torrent's path"`
+	} `positional-args:"true"`
 }
 
 // Rename renames a torrent path or file.
 func Rename(c *Command) {
-	_, ok := c.Options.(renameOptions)
+	opts, ok := c.Options.(renameOptions)
 	optionsCheck(ok)
 
 	finder := torrent.NewFinder(c.Client)
 
-	if len(c.PositionalArgs) != 2 {
-		fmt.Println("Rename requires oldname newname")
+	oldname := utils.RealPath(opts.Positional.Oldname)
+	newname := utils.RealPath(opts.Positional.Newname)
+
+	var torrent *transmissionrpc.Torrent
+	if opts.ID != 0 {
+		torrents, err := c.Client.TorrentGet([]string{"id", "downloadDir", "name"}, []int64{opts.ID})
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Torrent ID %d not found.", opts.ID)
+			os.Exit(1)
+		}
+		torrent = torrents[0]
+	} else {
+		torrent, _ = finder.Find(oldname)
 	}
-
-	oldname := utils.RealPath(c.PositionalArgs[0])
-	newname := utils.RealPath(c.PositionalArgs[1])
-
-	torrent, _ := finder.Find(oldname)
 	if torrent == nil {
 		fmt.Fprintln(os.Stderr, "Couldn't determine associated torrent from ", oldname)
 		os.Exit(1)
@@ -48,7 +60,6 @@ func Rename(c *Command) {
 		fmt.Println("Rename: err: ", err)
 		os.Exit(1)
 	} else {
-		message := fmt.Sprintf("Renamed %s to %s", oldname, newname)
-		c.status(message, torrent)
+		c.statusf("Renamed %s to %s", oldname, newname)
 	}
 }

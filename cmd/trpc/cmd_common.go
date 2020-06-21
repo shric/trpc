@@ -87,13 +87,16 @@ func (c *Command) Run() {
 	}
 }
 
-func (c *Command) status(msg string, torrent *transmissionrpc.Torrent) {
+func (c *Command) statusf(format string, a ...interface{}) {
 	var dryRun string
 	if c.CommonOptions.DryRun {
 		dryRun = "[dry run] "
 	}
+	fmt.Printf(dryRun+format+"\n", a...)
+}
 
-	fmt.Printf("%s%s %d: %s\n", dryRun, msg, *torrent.ID, *torrent.Name)
+func (c *Command) status(msg string, torrent *transmissionrpc.Torrent) {
+	c.statusf("%s %d: %s", msg, *torrent.ID, *torrent.Name)
 }
 
 func optionsCheck(ok bool) {
