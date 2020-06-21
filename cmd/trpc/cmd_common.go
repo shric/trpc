@@ -13,7 +13,7 @@ import (
 // subcommands. It still needs to be explicitly included.
 type commonOptions struct {
 	DryRun bool `short:"n" long:"dry-run" description:"Dry run -- don't talk to the client, just print what would happen"`
-	Debug  bool `short:"d" long:"debug" description:"Debug -- output the reply from server to stderr"`
+	Debug  bool `short:"D" long:"debug" description:"Debug -- output the reply from server to stderr"`
 }
 
 type options struct {
