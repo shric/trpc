@@ -6,12 +6,14 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/jessevdk/go-flags"
+	"github.com/shric/trpc/internal/client"
 )
 
 // CommonOptions declares command line arguments that apply to all or most
 // subcommands. It still needs to be explicitly included.
 type commonOptions struct {
 	DryRun bool `short:"n" long:"dry-run" description:"Dry run -- don't talk to the client, just print what would happen"`
+	Debug  bool `short:"d" long:"debug" description:"Debug -- output the reply from server to stderr"`
 }
 
 type options struct {
@@ -44,7 +46,7 @@ type Command struct {
 }
 
 // Run parses flags.
-func Run(client *transmissionrpc.Client) {
+func Run() {
 	var args = new(options)
 
 	p := flags.NewParser(args, flags.Default)
@@ -68,10 +70,12 @@ func Run(client *transmissionrpc.Client) {
 		"which":   {Runner: Which, Options: args.Which},
 	}
 
+	c := client.Connect(args.Common.Debug)
+
 	command := &Command{
 		PositionalArgs: remaining,
 		CommonOptions:  args.Common,
-		Client:         client,
+		Client:         c,
 	}
 
 	command.CommandInstance = commandInstances[p.Active.Name]

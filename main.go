@@ -5,6 +5,5 @@ import (
 )
 
 func main() {
-	client := Connect()
-	cmd.Run(client)
+	cmd.Run()
 }

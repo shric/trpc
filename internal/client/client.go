@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"fmt"
@@ -49,7 +49,7 @@ func getAuth() (user string, pass string) {
 // Parses environment variables:
 //   TR_HOST: "host[:port]" (default port 9091)
 //   TR_AUTH: "user:password"
-func Connect() *transmissionrpc.Client {
+func Connect(debug bool) *transmissionrpc.Client {
 	host, port := getHostPort()
 	user, pass := getAuth()
 
@@ -59,6 +59,7 @@ func Connect() *transmissionrpc.Client {
 	}
 
 	transmissionbt, err := transmissionrpc.New(host, user, pass, &transmissionrpc.AdvancedConfig{
+		Debug:       debug,
 		HTTPS:       false,
 		Port:        port,
 		RPCURI:      "/transmission/rpc",

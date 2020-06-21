@@ -8,6 +8,8 @@ github.com/hekmon/cunits/v2 v2.0.2 h1:qnZMfVxBiTgtAXVSMLKxzV1nihS6KzdjDHgh+nS4Rg
 github.com/hekmon/cunits/v2 v2.0.2/go.mod h1:9r1TycXYXaTmEWlAIfFV8JT+Xo59U96yUJAYHxzii2M=
 github.com/hekmon/transmissionrpc v1.1.0 h1:58xY27x2JYxaMlIj7ycKnxqgCm3IjvTxfB7cHPLxOfs=
 github.com/hekmon/transmissionrpc v1.1.0/go.mod h1:qkwhsyD/MQSlWvOE1AC92xajwEveAuGsOvTuOBZEuHc=
+github.com/hekmon/transmissionrpc v1.1.1-0.20200621183139-05b4d9c9659e h1:6bcYl6USkGr+LG3B89BL4VDSwASL1uHCltUltcwuquw=
+github.com/hekmon/transmissionrpc v1.1.1-0.20200621183139-05b4d9c9659e/go.mod h1:qkwhsyD/MQSlWvOE1AC92xajwEveAuGsOvTuOBZEuHc=
 github.com/jessevdk/go-flags v1.4.0 h1:4IU2WS7AumrZ/40jfhf4QVDMsQwqA7VEHozFRrGARJA=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/pelletier/go-toml v1.8.0 h1:Keo9qb7iRJs2voHvunFtuuYFsbWeOBh8/P9v/kVMFtw=
