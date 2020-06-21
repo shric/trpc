@@ -27,6 +27,7 @@ type options struct {
 	Start   startOptions  `command:"start" description:"Start torrents"`
 	Stop    stopOptions   `command:"stop" description:"Start torrents"`
 	Verify  verifyOptions `command:"verify" alias:"hash" description:"Verify torrents (hash check)"`
+	Watch   watchOptions  `command:"watch" description:"Watch progress for torrents"`
 	Which   whichOptions  `command:"which" description:"Identify which file/path a torrent belongs to"`
 	Version struct{}      `command:"version" description:"Print version"`
 }
@@ -75,6 +76,7 @@ func Run() {
 		"stop":    {Runner: Stop, Options: args.Stop},
 		"verify":  {Runner: Verify, Options: args.Verify},
 		"version": {Runner: Version, Options: args.Version},
+		"watch":   {Runner: Watch, Options: args.Watch},
 		"which":   {Runner: Which, Options: args.Which},
 	}
 

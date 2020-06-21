@@ -15,8 +15,6 @@ github.com/mattn/go-runewidth v0.0.9/go.mod h1:H031xJmbD/WCDINGzjvQ9THkh0rPKHF+m
 github.com/pelletier/go-toml v1.8.0 h1:Keo9qb7iRJs2voHvunFtuuYFsbWeOBh8/P9v/kVMFtw=
 github.com/pelletier/go-toml v1.8.0/go.mod h1:D6yutnOGMveHEPV7VQOuvI/gXY61bv+9bAOTRnLElKs=
 github.com/pkg/term v0.0.0-20200520122047-c3ffed290a03/go.mod h1:Z9+Ul5bCbBKnbCvdOWbLqTHhJiYV414CURZJba6L8qA=
-github.com/shric/monkey v0.0.0-20200624235811-5c1921a7d8e4 h1:/Le9Ac67Pne8caEa2++zbFhbhfeY8tt/5t49Ib1lCAM=
-github.com/shric/monkey v0.0.0-20200624235811-5c1921a7d8e4/go.mod h1:ZR7SYqzdRUnawBzSSTp2vPt9tCsY7r25BHtR3OT1I3M=
 github.com/shric/monkey v0.6.0 h1:zRZ4zT/2RXFPCJL+ZTNLyg6Mdmszb8W+tzSk9cd4mZE=
 github.com/shric/monkey v0.6.0/go.mod h1:yRrbwU/vd5T2zibpl4ALltQkotvwCOK77tpKz8FloxA=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
