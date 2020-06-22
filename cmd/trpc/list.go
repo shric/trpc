@@ -14,13 +14,13 @@ import (
 )
 
 func format(torrent *torrent.Torrent, _ *config.Config) string {
-	format := `{{printf "%4v" .ID}} ` +
+	format := `{{printf "%4s" .ID}} ` +
 		`{{.Error}} ` +
 		`{{printf "%6.1f" .Percent}}%  ` +
-		`{{printf "%12s" .Size}} ` +
+		`{{printf "%12s" .SizeWhenDone}} ` +
 		`{{printf "%-8s" .Eta}} ` +
-		`{{printf "%7.1f" .Up}} ` +
-		`{{printf "%7.1f" .Down}} ` +
+		`{{printf "%8s" .Up}} ` +
+		`{{printf "%8s" .Down}} ` +
 		`{{printf "%6.1f" .Ratio}} ` +
 		`{{printf "%-6s" .Priority}}  ` +
 		`{{printf "%-4s" .Trackershortname}}  ` +
@@ -48,7 +48,7 @@ func List(c *Command) {
 	opts, ok := c.Options.(listOptions)
 	optionsCheck(ok)
 
-	var total torrent.Torrent
+	total := torrent.NewForTotal()
 
 	total.Error = " "
 
@@ -66,13 +66,12 @@ func List(c *Command) {
 		"isFinished",
 	}, func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 		result := torrent.NewFrom(transmissionrpcTorrent, conf)
-		total.Size += result.Size
-		total.Up += result.Up
-		total.Down += result.Down
+		total.UpdateTotal(result)
+
 		formattedTorrent := format(result, conf)
 		fmt.Println(formattedTorrent)
 	})
 
-	formattedTotal := format(&total, conf)
+	formattedTotal := format(total, conf)
 	fmt.Println(formattedTotal)
 }
