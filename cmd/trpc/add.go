@@ -51,8 +51,6 @@ func Add(c *Command) {
 
 		// Assume it's a file.
 		if err != nil || url.Scheme == "" {
-			fmt.Println("Treating as file.")
-
 			b64, err := transmissionrpc.File2Base64(arg)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "can't encode '%s' content as base64: %v", arg, err)
