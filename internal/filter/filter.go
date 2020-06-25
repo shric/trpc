@@ -5,6 +5,10 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/shric/trpc/internal/torrent"
+
+	"github.com/shric/trpc/internal/config"
+
 	"github.com/shric/monkey/evaluator"
 	"github.com/shric/monkey/lexer"
 	"github.com/shric/monkey/object"
@@ -27,15 +31,17 @@ type filterFunc struct {
 
 // Instance is used to hold all data required for a filter.
 type Instance struct {
+	conf        *config.Config
 	opts        Options
 	filterFuncs []filterFunc
 	Args        []string
 }
 
 // New returns a new filter based on the options passed.
-func New(opts Options) *Instance {
+func New(opts Options, conf *config.Config) *Instance {
 	filter := Instance{
 		opts: opts,
+		conf: conf,
 		filterFuncs: []filterFunc{
 			{
 				predicate: func(t *transmissionrpc.Torrent, v string) bool {
@@ -76,19 +82,19 @@ func set(set interface{}) bool {
 	return false
 }
 
-func envForTorrent(torrent *transmissionrpc.Torrent) *object.Environment {
+func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment {
 	env := object.NewEnvironment()
-	if *torrent.LeftUntilDone == 0 {
+	if *t.LeftUntilDone == 0 {
 		env.Set("complete", evaluator.TRUE)
 		env.Set("incomplete", evaluator.FALSE)
 	} else {
 		env.Set("complete", evaluator.FALSE)
 		env.Set("incomplete", evaluator.TRUE)
 	}
-	env.Set("size", &object.Integer{Value: int64(torrent.SizeWhenDone.Byte())})
-	trackers := make([]object.Object, len(torrent.Trackers))
-	trackerStrings := make([]object.String, len(torrent.Trackers))
-	for i, tracker := range torrent.Trackers {
+	env.Set("size", &object.Integer{Value: int64(t.SizeWhenDone.Byte())})
+	trackers := make([]object.Object, len(t.Trackers))
+	trackerStrings := make([]object.String, len(t.Trackers))
+	for i, tracker := range t.Trackers {
 		url, err := url.Parse(tracker.Announce)
 		if err != nil {
 			continue
@@ -97,10 +103,12 @@ func envForTorrent(torrent *transmissionrpc.Torrent) *object.Environment {
 		trackers[i] = &trackerStrings[i]
 	}
 	env.Set("trackers", &object.Array{Elements: trackers})
+	env.Set("tracker", &object.String{Value: torrent.TrackerShortName(t, f.conf)})
 	return env
 }
 
-func checkFilterExpression(expr string, torrent *transmissionrpc.Torrent) bool {
+func (f *Instance) checkFilterExpression(torrent *transmissionrpc.Torrent) bool {
+	expr := f.opts.Filter
 	l := lexer.New(expr)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -116,7 +124,7 @@ func checkFilterExpression(expr string, torrent *transmissionrpc.Torrent) bool {
 		os.Exit(1)
 	}
 
-	result := evaluator.Eval(program, envForTorrent(torrent))
+	result := evaluator.Eval(program, f.envForTorrent(torrent))
 	switch v := result.(type) {
 	case *object.Boolean:
 		return v.Value
@@ -145,7 +153,7 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 	}
 
 	if f.opts.Filter != "" {
-		match = checkFilterExpression(f.opts.Filter, torrent)
+		match = f.checkFilterExpression(torrent)
 	}
 
 	return match
