@@ -6,7 +6,7 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
-	"github.com/shric/trpc/internal/torrent"
+	"github.com/shric/trpc/internal/util"
 )
 
 type rmOptions struct {
@@ -25,7 +25,7 @@ func Rm(c *Command) {
 		return
 	}
 
-	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id"},
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{

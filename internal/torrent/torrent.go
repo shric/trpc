@@ -110,18 +110,23 @@ func (torrent Torrent) priority() string {
 	return priorities[*torrent.original.BandwidthPriority+1]
 }
 
-func (torrent Torrent) trackershortname(conf *config.Config) string {
-	firstTracker := torrent.original.Trackers[0].Announce
-
-	for _, url := range torrent.original.Trackers {
+func TrackerShortName(torrent *transmissionrpc.Torrent, conf *config.Config) string {
+	for _, url := range torrent.Trackers {
 		for match, shortname := range conf.Trackernames {
 			if strings.Contains(url.Announce, match) {
 				return shortname
 			}
 		}
 	}
+	return ""
+}
 
-	url, err := url.Parse(firstTracker)
+func (torrent Torrent) trackershortname(conf *config.Config) string {
+	if tsn := TrackerShortName(torrent.original, conf); tsn != "" {
+		return tsn
+	}
+
+	url, err := url.Parse(torrent.original.Trackers[0].Announce)
 	if err != nil {
 		return "UNK"
 	}

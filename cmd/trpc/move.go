@@ -6,8 +6,7 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
-	"github.com/shric/trpc/internal/torrent"
-	"github.com/shric/trpc/internal/utils"
+	"github.com/shric/trpc/internal/util"
 )
 
 type moveOptions struct {
@@ -16,7 +15,7 @@ type moveOptions struct {
 }
 
 func getFnamesAndDest(args []string) (fnames []string, dest string) {
-	dest = utils.RealPath(args[len(args)-1])
+	dest = util.RealPath(args[len(args)-1])
 	fnames = args[:len(args)-1]
 
 	return
@@ -38,7 +37,7 @@ func Move(c *Command) {
 	}
 
 	fnames, destination := getFnamesAndDest(c.PositionalArgs)
-	torrent.ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+	util.ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSetLocation(*torrent.ID, destination, true)
 			if err != nil {

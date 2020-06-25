@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shric/trpc/internal/torrent"
+	"github.com/shric/trpc/internal/util"
 )
 
 type whichOptions struct {
@@ -16,7 +16,7 @@ func Which(c *Command) {
 	_, ok := c.Options.(whichOptions)
 	optionsCheck(ok)
 
-	finder := torrent.NewFinder(c.Client)
+	finder := util.NewFinder(c.Client)
 
 	for _, f := range c.PositionalArgs {
 		torrent, fileID := finder.Find(f)

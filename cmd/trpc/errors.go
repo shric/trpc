@@ -6,7 +6,7 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
-	"github.com/shric/trpc/internal/torrent"
+	"github.com/shric/trpc/internal/util"
 )
 
 type errorsOptions struct {
@@ -22,7 +22,7 @@ func Errors(c *Command) {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on errors as errors doesn't change state")
 	}
 
-	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
 		"name", "id", "error", "errorString",
 	}, func(torrent *transmissionrpc.Torrent) {
 		if *torrent.Error != 0 {

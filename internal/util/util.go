@@ -1,4 +1,4 @@
-package torrent
+package util
 
 import (
 	"fmt"
@@ -6,16 +6,17 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/shric/trpc/internal/config"
+
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
-	"github.com/shric/trpc/internal/utils"
 )
 
 func getAbsoluteFnames(fnames []string) (absoluteFnames map[string]int64) {
 	absoluteFnames = make(map[string]int64)
 
 	for _, fn := range fnames {
-		realPath := utils.RealPath(fn)
+		realPath := RealPath(fn)
 		absoluteFnames[realPath] = -1
 	}
 
@@ -90,7 +91,8 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 ) {
 	ids := make([]int64, 0, len(args))
 
-	f := filter.New(filterOptions)
+	conf := config.ReadConfig()
+	f := filter.New(filterOptions, conf)
 
 	fields = append(fields, f.Args...)
 

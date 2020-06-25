@@ -5,10 +5,11 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/shric/trpc/internal/torrent"
+
 	"github.com/hekmon/cunits/v2"
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/config"
-	"github.com/shric/trpc/internal/torrent"
 )
 
 func makeTorrent(sizeWhenDone cunits.Bits, eta int64, recheckProgress float64, leftUntilDone int64,

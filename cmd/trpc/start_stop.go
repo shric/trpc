@@ -6,7 +6,7 @@ import (
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/filter"
-	"github.com/shric/trpc/internal/torrent"
+	"github.com/shric/trpc/internal/util"
 )
 
 type startOptions struct {
@@ -25,7 +25,7 @@ func Start(c *Command) {
 		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id", "status"},
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id", "status"},
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status != transmissionrpc.TorrentStatusStopped {
 				return
@@ -48,7 +48,7 @@ type stopOptions struct {
 func Stop(c *Command) {
 	opts, ok := c.Options.(stopOptions)
 	optionsCheck(ok)
-	torrent.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id", "status"},
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{"name", "id", "status"},
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status == transmissionrpc.TorrentStatusStopped {
 				return

@@ -7,8 +7,7 @@ import (
 	"strings"
 
 	"github.com/hekmon/transmissionrpc"
-	"github.com/shric/trpc/internal/torrent"
-	"github.com/shric/trpc/internal/utils"
+	"github.com/shric/trpc/internal/util"
 )
 
 type renameOptions struct {
@@ -24,10 +23,10 @@ func Rename(c *Command) {
 	opts, ok := c.Options.(renameOptions)
 	optionsCheck(ok)
 
-	finder := torrent.NewFinder(c.Client)
+	finder := util.NewFinder(c.Client)
 
-	oldname := utils.RealPath(opts.Positional.Oldname)
-	newname := utils.RealPath(opts.Positional.Newname)
+	oldname := util.RealPath(opts.Positional.Oldname)
+	newname := util.RealPath(opts.Positional.Newname)
 
 	var torrent *transmissionrpc.Torrent
 
@@ -48,7 +47,7 @@ func Rename(c *Command) {
 		os.Exit(1)
 	}
 
-	realDownloadDir := utils.RealPath(*torrent.DownloadDir) + "/"
+	realDownloadDir := util.RealPath(*torrent.DownloadDir) + "/"
 
 	oldname = strings.Replace(oldname, realDownloadDir, "", 1)
 	newname = path.Base(newname)
