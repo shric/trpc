@@ -19,8 +19,8 @@ import (
 
 // Options declares all the command line arguments for filtering torrents.
 type Options struct {
-	Filter     string `short:"f" long:"filter" description:"apply filter expression" unquote:"false"`
-	Incomplete bool   `short:"i" long:"incomplete" description:"only incomplete torrents"`
+	Filter     []string `short:"f" long:"filter" description:"apply filter expression" unquote:"false"`
+	Incomplete bool     `short:"i" long:"incomplete" description:"only incomplete torrents"`
 }
 
 type filterFunc struct {
@@ -108,35 +108,38 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 }
 
 func (f *Instance) checkFilterExpression(torrent *transmissionrpc.Torrent) bool {
-	expr := f.opts.Filter
-	l := lexer.New(expr)
-	p := parser.New(l)
-	program := p.ParseProgram()
+	for _, expr := range f.opts.Filter {
+		l := lexer.New(expr)
+		p := parser.New(l)
+		program := p.ParseProgram()
 
-	if len(p.Errors()) != 0 {
-		fmt.Fprintln(os.Stderr, "Filter parser error(s):")
+		if len(p.Errors()) != 0 {
+			fmt.Fprintln(os.Stderr, "Filter parser error(s):")
+			for _, msg := range p.Errors() {
+				fmt.Fprintln(os.Stderr, "\t", msg)
+			}
 
-		for _, msg := range p.Errors() {
-			fmt.Fprintln(os.Stderr, "\t", msg)
+			fmt.Println(program.String())
+			os.Exit(1)
 		}
 
-		fmt.Println(program.String())
-		os.Exit(1)
+		result := evaluator.Eval(program, f.envForTorrent(torrent))
+		switch v := result.(type) {
+		case *object.Boolean:
+			if !v.Value {
+				return false
+			} else {
+				continue
+			}
+		case *object.Error:
+			fmt.Fprintf(os.Stderr, "Invalid filter expression: %s\n", v.Message)
+			os.Exit(1)
+		default:
+			fmt.Fprintf(os.Stderr, "Invalid filter expression: doesn't evaluate to boolean: %q\n", v)
+			os.Exit(1)
+		}
 	}
-
-	result := evaluator.Eval(program, f.envForTorrent(torrent))
-	switch v := result.(type) {
-	case *object.Boolean:
-		return v.Value
-	case *object.Error:
-		fmt.Fprintf(os.Stderr, "Invalid filter expression: %s\n", v.Message)
-		os.Exit(1)
-	default:
-		fmt.Fprintf(os.Stderr, "Invalid filter expression: doesn't evaluate to boolean: %q\n", v)
-		os.Exit(1)
-	}
-
-	return false
+	return true
 }
 
 // CheckFilter checks if the supplied torrent matches after filters.
@@ -152,9 +155,6 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 		}
 	}
 
-	if f.opts.Filter != "" {
-		match = f.checkFilterExpression(torrent)
-	}
-
+	match = f.checkFilterExpression(torrent)
 	return match
 }
