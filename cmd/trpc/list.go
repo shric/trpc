@@ -64,7 +64,7 @@ func List(c *Command) {
 		"leftUntilDone", "recheckProgress", "error", "rateDownload",
 		"status", "trackers", "bandwidthPriority", "uploadedEver",
 		"downloadDir", "addedDate", "doneDate", "startDate",
-		"isFinished",
+		"isFinished", "errorString",
 	}, func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 		result := torrent.NewFrom(transmissionrpcTorrent, conf)
 		total.UpdateTotal(result)

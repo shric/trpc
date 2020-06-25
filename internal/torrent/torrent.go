@@ -3,9 +3,11 @@ package torrent
 
 import (
 	"fmt"
+	"math"
 	"net/url"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/shric/trpc/internal/config"
 
@@ -33,7 +35,7 @@ const (
 	EiB
 )
 
-func statusStr(torrent Torrent) *string {
+func Status(torrent *transmissionrpc.Torrent) string {
 	statusStrings := map[transmissionrpc.TorrentStatus]string{
 		transmissionrpc.TorrentStatusStopped:      "Stopped",
 		transmissionrpc.TorrentStatusCheckWait:    "To Hash",
@@ -43,11 +45,11 @@ func statusStr(torrent Torrent) *string {
 		transmissionrpc.TorrentStatusIsolated:     "No peers",
 	}
 
-	if val, ok := statusStrings[*torrent.original.Status]; ok {
-		return &val
+	if val, ok := statusStrings[*torrent.Status]; ok {
+		return val
 	}
 
-	return nil
+	return ""
 }
 
 func etastr(eta int64) string {
@@ -100,14 +102,20 @@ func (torrent Torrent) ratio() float64 {
 	return float64(torrent.UploadedEver) / torrent.SizeWhenDone.Byte()
 }
 
-func (torrent Torrent) priority() string {
+func Age(t *transmissionrpc.Torrent) int64 {
+	lastActivity := int64(math.Max(float64(t.DoneDate.Unix()), float64(t.AddedDate.Unix())))
+	now := time.Now().Unix()
+	return now - lastActivity
+}
+
+func Priority(t *transmissionrpc.Torrent) string {
 	priorities := []string{"low", "normal", "high"}
 	// We add one because
 	// https://github.com/transmission/transmission/blob/master/libtransmission/transmission.h
 	//     TR_PRI_LOW = -1,
 	//     TR_PRI_NORMAL = 0, /* since NORMAL is 0, memset initializes nicely */
 	//     TR_PRI_HIGH = 1
-	return priorities[*torrent.original.BandwidthPriority+1]
+	return priorities[*t.BandwidthPriority+1]
 }
 
 func TrackerShortName(torrent *transmissionrpc.Torrent, conf *config.Config) string {
@@ -190,13 +198,13 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Confi
 	torrent.down = float64(*torrent.original.RateDownload)
 	torrent.Down = fmt.Sprintf("%7.1f", torrent.down/float64(KiB))
 	torrent.Ratio = torrent.ratio()
-	torrent.Priority = torrent.priority()
+	torrent.Priority = Priority(torrent.original)
 	torrent.Trackershortname = torrent.trackershortname(conf)
 
-	status := statusStr(*torrent)
-	if status != nil {
-		torrent.Up = *status
-		torrent.Down = *status
+	status := Status(torrent.original)
+	if status != "" {
+		torrent.Up = status
+		torrent.Down = status
 	}
 
 	return torrent

@@ -104,6 +104,19 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 	}
 	env.Set("trackers", &object.Array{Elements: trackers})
 	env.Set("tracker", &object.String{Value: torrent.TrackerShortName(t, f.conf)})
+	env.Set("down", &object.Integer{Value: *t.RateDownload})
+	env.Set("up", &object.Integer{Value: *t.RateUpload})
+	env.Set("age", &object.Integer{Value: torrent.Age(t)})
+	env.Set("downloadDir", &object.String{Value: *t.DownloadDir})
+	env.Set("priority", &object.String{Value: torrent.Priority(t)})
+	env.Set("status", &object.String{Value: torrent.Status(t)})
+	env.Set("name", &object.String{Value: *t.Name})
+	if *t.Error != 0 {
+		env.Set("error", &object.String{Value: *t.ErrorString})
+	} else {
+		env.Set("error", &object.String{Value: ""})
+	}
+
 	return env
 }
 
