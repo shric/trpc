@@ -8,7 +8,9 @@
 
 A pleasant frontend for transmission.
 
-This project was only started recently and therefore is very barebones.
+This project was only started recently and is very much an alpha.
+Backwards incompatible changes might be made, but in general there should be 
+no bugs on the master branch.
 
 The intention is to provide a more user friendly interface compared to `transmission-remote`.
 
