@@ -9,10 +9,13 @@
 A pleasant frontend for transmission.
 
 This project was only started recently and is very much an alpha.
-Backwards incompatible changes might be made, but in general there should be 
-no bugs on the master branch.
+Backwards incompatible changes might be made, but in general there should be
+no bugs on the master branch. I will sometimes push a chain of commits to master
+where it may be broken in the middle but should be fine at the final master
+commit.
 
-The intention is to provide a more user friendly interface compared to `transmission-remote`.
+The intention is to provide a more user friendly interface compared to
+`transmission-remote`.
 
 Here are some examples of things you can do easily that would require at least
 some scripting with transmission-remote alone:
@@ -54,13 +57,46 @@ trpc start ~/torrent/foo/*
 
 ### Filters
 
-Most commands above except for `add`, `version` and `which` accept filter arguments to limit the torrents acted upon (or displayed in the case of `list`):
+Most commands above except for `add`, `version`, `rename` and `which` accept
+filter arguments to limit the torrents acted upon (or displayed in the case of
+`list`):
 
 `-i, --incomplete`: Include only incomplete torrents
+`-a, --active`: Include only active torrents (downloading or uploading)
+`-t, --tracker`: Match on tracker short name
+`-e, --error`: Match on a specific error string
+`-d, --download-dir`: Match on a download directory.
+
+The above are all shorthand for a more powerful filter language:
+
+```sh
+# equivalent of trpc list -i
+trpc list -f 'incomplete'
+trpc list -f '!complete'
+
+# equivalent of trpc list -a
+trpc list -f 'up > 0 || down > 0'
+
+# equivalent of trpc list -t foo
+trpc list -f 'tracker == "foo"'
+
+# equivalent of trpc list -e 'unregistered torrent'
+trpc list -f 'error == "unregistered torrent"
+
+# equivalent of trpc list -d '/home/chris/images'
+trpc list -f 'downloadDir == "/home/chris/images"'
+
+# multiple expressions can be defined:
+# List incomplete torrents larger than 1 GiB
+trpc list -i -f 'size > 1 GiB'
+trpc list -f '!complete' -f 'size > 1 GiB'
+trpc list -f 'incomplete && size > 1 GiB'
+```
 
 ### Torrents can be selected by ID or filename
 
-Unlike `transmission-remote`, you can refer to a torrent by its filename. This allows easy shell globbing. Example:
+Unlike `transmission-remote`, you can refer to a torrent by its filename.
+This allows easy shell globbing. Example:
 
 ```sh
 # Pause all incomplete torrents in ~/torrents/recent
@@ -83,12 +119,6 @@ $ trpc stop --incomplete ~/torrent/recent/*
 `sessioninfo`: Show session information
 
 `watch`: Show a progress bar for incomplete active torrents
-
-### More filters
-
-* `-t, --tracker`: Select only torrents using a particular tracker
-
-* `-e, --error`: Select only torrents with a given error substring
 
 ### Sorting
 
