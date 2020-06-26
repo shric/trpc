@@ -37,7 +37,7 @@ func Move(c *Command) {
 	}
 
 	fnames, destination := getFnamesAndDest(c.PositionalArgs)
-	util.ProcessTorrents(c.Client, opts.Options, fnames, []string{"name", "id"}, func(torrent *transmissionrpc.Torrent) {
+	util.ProcessTorrents(c.Client, opts.Options, fnames, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSetLocation(*torrent.ID, destination, true)
 			if err != nil {

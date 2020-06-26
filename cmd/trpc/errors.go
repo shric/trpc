@@ -22,11 +22,10 @@ func Errors(c *Command) {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on errors as errors doesn't change state")
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
-		"name", "id", "error", "errorString",
-	}, func(torrent *transmissionrpc.Torrent) {
-		if *torrent.Error != 0 {
-			fmt.Printf("ID: %5d %s:\n\t%s\n", *torrent.ID, *torrent.Name, *torrent.ErrorString)
-		}
-	})
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+		func(torrent *transmissionrpc.Torrent) {
+			if *torrent.Error != 0 {
+				fmt.Printf("ID: %5d %s:\n\t%s\n", *torrent.ID, *torrent.Name, *torrent.ErrorString)
+			}
+		})
 }

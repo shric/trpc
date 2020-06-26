@@ -59,19 +59,14 @@ func List(c *Command) {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on list as list doesn't change state")
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, []string{
-		"name", "recheckProgress", "sizeWhenDone", "rateUpload", "eta", "id",
-		"leftUntilDone", "recheckProgress", "error", "rateDownload",
-		"status", "trackers", "bandwidthPriority", "uploadedEver",
-		"downloadDir", "addedDate", "doneDate", "startDate",
-		"isFinished", "errorString",
-	}, func(transmissionrpcTorrent *transmissionrpc.Torrent) {
-		result := torrent.NewFrom(transmissionrpcTorrent, conf)
-		total.UpdateTotal(result)
+	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+		func(transmissionrpcTorrent *transmissionrpc.Torrent) {
+			result := torrent.NewFrom(transmissionrpcTorrent, conf)
+			total.UpdateTotal(result)
 
-		formattedTorrent := format(result, conf)
-		fmt.Println(formattedTorrent)
-	})
+			formattedTorrent := format(result, conf)
+			fmt.Println(formattedTorrent)
+		})
 
 	formattedTotal := format(total, conf)
 	fmt.Println(formattedTotal)

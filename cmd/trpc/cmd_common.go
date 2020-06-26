@@ -45,6 +45,14 @@ type Command struct {
 	CommandInstance
 }
 
+var commonArgs = [...]string{
+	"id", "name", "status", "name", "recheckProgress", "sizeWhenDone",
+	"rateUpload", "eta", "id", "leftUntilDone", "recheckProgress", "error",
+	"rateDownload", "status", "trackers", "bandwidthPriority", "uploadedEver",
+	"downloadDir", "addedDate", "doneDate", "startDate", "isFinished",
+	"errorString",
+}
+
 // Run parses flags.
 func Run() {
 	var args = new(options)
