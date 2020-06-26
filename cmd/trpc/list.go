@@ -59,6 +59,7 @@ func List(c *Command) {
 		fmt.Fprintln(os.Stderr, "--dry-run has no effect on list as list doesn't change state")
 	}
 
+	linePrinted := false
 	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
 		func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 			result := torrent.NewFrom(transmissionrpcTorrent, conf)
@@ -66,8 +67,11 @@ func List(c *Command) {
 
 			formattedTorrent := format(result, conf)
 			fmt.Println(formattedTorrent)
+			linePrinted = true
 		})
 
-	formattedTotal := format(total, conf)
-	fmt.Println(formattedTotal)
+	if !opts.NoTotals && linePrinted {
+		formattedTotal := format(total, conf)
+		fmt.Println(formattedTotal)
+	}
 }
