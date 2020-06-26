@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/shric/trpc/internal/util"
+	"github.com/shric/trpc/internal/fileutils"
 
 	"github.com/hekmon/transmissionrpc"
 	"github.com/shric/trpc/internal/config"
@@ -46,7 +46,7 @@ func Add(c *Command) {
 		}
 
 		if opts.DownloadDir != "" {
-			realDownloadDir := util.RealPath(opts.DownloadDir)
+			realDownloadDir := fileutils.RealPath(opts.DownloadDir)
 			payload.DownloadDir = &realDownloadDir
 		}
 

@@ -5,6 +5,8 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/shric/trpc/internal/fileutils"
+
 	"github.com/shric/trpc/internal/torrent"
 
 	"github.com/shric/trpc/internal/config"
@@ -25,7 +27,7 @@ type Options struct {
 	Name        string   `long:"name" description:"match a torrent name (regex)"`
 	Tracker     string   `short:"t" long:"tracker" description:"match a tracker (regex)"`
 	Error       string   `short:"e" long:"errors" description:"torrents with error matching string (regex)"`
-	DownloadDir string   `short:"d" long:"download-dir" description:"match on download directory (regex)"`
+	DownloadDir string   `short:"d" long:"download-dir" description:"match on download directory"`
 }
 
 // Instance is used to hold all data required for a filter.
@@ -57,7 +59,7 @@ func New(opts Options, conf *config.Config) *Instance {
 	}
 
 	if opts.DownloadDir != "" {
-		expressions = append(expressions, fmt.Sprintf("downloadDir ~ \"%s\"", opts.DownloadDir))
+		expressions = append(expressions, fmt.Sprintf("downloadDir == \"%s\"", fileutils.RealPath(opts.DownloadDir)))
 	}
 
 	if opts.Name != "" {

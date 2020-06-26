@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/shric/trpc/internal/fileutils"
+
 	"github.com/hekmon/transmissionrpc"
 )
 
@@ -57,7 +59,7 @@ func (t *Finder) getDownloadDirs() {
 	var realDownloadDir string
 
 	for _, torrent := range torrents {
-		realDownloadDir = RealPath(*torrent.DownloadDir)
+		realDownloadDir = fileutils.RealPath(*torrent.DownloadDir)
 
 		paths := []string{realDownloadDir}
 
@@ -84,7 +86,7 @@ func (t *Finder) getDownloadDirs() {
 
 // Find returns the torrent and file ID of a given file.
 func (t *Finder) Find(filename string) (*transmissionrpc.Torrent, int64) {
-	absFilename := RealPath(filename)
+	absFilename := fileutils.RealPath(filename)
 
 	if val, ok := t.cache[absFilename]; ok {
 		if val[1] != fileIDunknown {
@@ -100,7 +102,7 @@ func (t *Finder) Find(filename string) (*transmissionrpc.Torrent, int64) {
 		}
 
 		if strings.HasPrefix(absFilename, fullPath) {
-			if IsDirectory(absFilename) {
+			if fileutils.IsDirectory(absFilename) {
 				return t.torrents[t.cache[fullPath][0]], fileIDdirectory
 			}
 
@@ -111,7 +113,7 @@ func (t *Finder) Find(filename string) (*transmissionrpc.Torrent, int64) {
 			}
 
 			torrent := torrents[0]
-			realDownloadDir := RealPath(*torrent.DownloadDir)
+			realDownloadDir := fileutils.RealPath(*torrent.DownloadDir)
 
 			for i, file := range torrent.Files {
 				fullPath := filepath.Join(realDownloadDir, file.Name)

@@ -8,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/shric/trpc/internal/fileutils"
+
 	"github.com/shric/trpc/internal/torrent"
 
 	"github.com/shric/trpc/internal/config"
@@ -20,7 +22,7 @@ func getAbsoluteFnames(fnames []string) (absoluteFnames map[string]int64) {
 	absoluteFnames = make(map[string]int64)
 
 	for _, fn := range fnames {
-		realPath := RealPath(fn)
+		realPath := fileutils.RealPath(fn)
 		absoluteFnames[realPath] = -1
 	}
 
