@@ -35,6 +35,7 @@ const (
 	EiB
 )
 
+// Status returns the status of a torrent.
 func Status(torrent *transmissionrpc.Torrent) string {
 	statusStrings := map[transmissionrpc.TorrentStatus]string{
 		transmissionrpc.TorrentStatusStopped:      "Stopped",
@@ -85,28 +86,34 @@ func (torrent Torrent) eta() string {
 	return etastr(*torrent.original.Eta)
 }
 
+// Have returns the number of bytes downloaded so far.
 func Have(t *transmissionrpc.Torrent) int64 {
 	return int64(t.SizeWhenDone.Byte()) - *t.LeftUntilDone
-
 }
 
+// Progress returns the progress as a percentage of a download or hash check.
 func Progress(t *transmissionrpc.Torrent) float64 {
-	if *t.RecheckProgress != 0.0 {
+	if *t.RecheckProgress != 0 {
 		return 100.0 * *t.RecheckProgress
 	}
+
 	return 100.0 * float64(Have(t)) / t.SizeWhenDone.Byte()
 }
 
+// Ratio returns the upload/size ratio.
 func Ratio(t *transmissionrpc.Torrent) float64 {
 	return float64(*t.UploadedEver) / t.SizeWhenDone.Byte()
 }
 
+// Age returns the age of the torrent (the later of DoneDate and AddedDate).
 func Age(t *transmissionrpc.Torrent) int64 {
 	lastActivity := int64(math.Max(float64(t.DoneDate.Unix()), float64(t.AddedDate.Unix())))
 	now := time.Now().Unix()
+
 	return now - lastActivity
 }
 
+// Priority returns the priority of a torrent (low, medium, high).
 func Priority(t *transmissionrpc.Torrent) string {
 	priorities := []string{"low", "normal", "high"}
 	// We add one because
@@ -117,6 +124,7 @@ func Priority(t *transmissionrpc.Torrent) string {
 	return priorities[*t.BandwidthPriority+1]
 }
 
+// TrackerShortName returns the configured short name of a torrent.
 func TrackerShortName(torrent *transmissionrpc.Torrent, conf *config.Config) string {
 	for _, url := range torrent.Trackers {
 		for match, shortname := range conf.Trackernames {
@@ -125,6 +133,7 @@ func TrackerShortName(torrent *transmissionrpc.Torrent, conf *config.Config) str
 			}
 		}
 	}
+
 	return ""
 }
 

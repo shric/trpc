@@ -62,6 +62,7 @@ func List(c *Command) {
 	}
 
 	linePrinted := false
+
 	var sortField *string
 	if opts.Sort != "" {
 		sortField = &opts.Sort

@@ -30,7 +30,6 @@ type Options struct {
 // Instance is used to hold all data required for a filter.
 type Instance struct {
 	conf        *config.Config
-	opts        Options
 	expressions []string
 	Args        []string
 }
@@ -39,31 +38,39 @@ type Instance struct {
 func New(opts Options, conf *config.Config) *Instance {
 	expressions := opts.Filter
 	args := make([]string, 0)
+
 	if opts.Incomplete {
 		expressions = append(expressions, "incomplete")
 	}
+
 	if opts.Active {
 		expressions = append(expressions, "up > 0 || down > 0")
 	}
+
 	if opts.Tracker != "" {
 		expressions = append(expressions, fmt.Sprintf("tracker == \"%s\"", opts.Tracker))
 	}
+
 	if opts.Error != "" {
 		expressions = append(expressions, fmt.Sprintf("error == \"%s\"", opts.Error))
 	}
+
 	if opts.DownloadDir != "" {
 		expressions = append(expressions, fmt.Sprintf("downloadDir == \"%s\"", opts.DownloadDir))
 	}
+
 	filter := Instance{
 		conf:        conf,
 		expressions: expressions,
 		Args:        args,
 	}
+
 	return &filter
 }
 
 func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment {
 	env := object.NewEnvironment()
+
 	if *t.LeftUntilDone == 0 {
 		env.Set("complete", evaluator.TRUE)
 		env.Set("incomplete", evaluator.FALSE)
@@ -71,17 +78,22 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 		env.Set("complete", evaluator.FALSE)
 		env.Set("incomplete", evaluator.TRUE)
 	}
+
 	env.Set("size", &object.Integer{Value: int64(t.SizeWhenDone.Byte())})
+
 	trackers := make([]object.Object, len(t.Trackers))
 	trackerStrings := make([]object.String, len(t.Trackers))
+
 	for i, tracker := range t.Trackers {
 		URL, err := url.Parse(tracker.Announce)
 		if err != nil {
 			continue
 		}
+
 		trackerStrings[i] = object.String{Value: URL.Hostname()}
 		trackers[i] = &trackerStrings[i]
 	}
+
 	env.Set("trackers", &object.Array{Elements: trackers})
 	env.Set("tracker", &object.String{Value: torrent.TrackerShortName(t, f.conf)})
 	env.Set("down", &object.Integer{Value: *t.RateDownload})
@@ -91,6 +103,7 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 	env.Set("priority", &object.String{Value: torrent.Priority(t)})
 	env.Set("status", &object.String{Value: torrent.Status(t)})
 	env.Set("name", &object.String{Value: *t.Name})
+
 	if *t.Error != 0 {
 		env.Set("error", &object.String{Value: *t.ErrorString})
 	} else {
@@ -103,6 +116,7 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 // CheckFilter checks if the supplied torrent matches after filters.
 func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 	env := f.envForTorrent(torrent)
+
 	for _, expr := range f.expressions {
 		l := lexer.New(expr)
 		p := parser.New(l)
@@ -110,6 +124,7 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 
 		if len(p.Errors()) != 0 {
 			fmt.Fprintln(os.Stderr, "Filter parser error(s):")
+
 			for _, msg := range p.Errors() {
 				fmt.Fprintln(os.Stderr, "\t", msg)
 			}
@@ -123,9 +138,9 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 		case *object.Boolean:
 			if !v.Value {
 				return false
-			} else {
-				continue
 			}
+
+			continue
 		case *object.Error:
 			fmt.Fprintf(os.Stderr, "Invalid filter expression: %s\n", v.Message)
 			os.Exit(1)
@@ -134,5 +149,6 @@ func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
 			os.Exit(1)
 		}
 	}
+
 	return true
 }
