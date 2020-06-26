@@ -22,9 +22,10 @@ type Options struct {
 	Filter      []string `short:"f" long:"filter" description:"apply filter expression" unquote:"false"`
 	Incomplete  bool     `short:"i" long:"incomplete" description:"only incomplete torrents"`
 	Active      bool     `short:"a" long:"active" description:"torrents currently uploading or downloading"`
-	Tracker     string   `short:"t" long:"tracker" description:"match a tracker"`
-	Error       string   `short:"e" long:"errors" description:"torrents with error matching string"`
-	DownloadDir string   `short:"d" long:"download-dir" description:"match on download directory"`
+	Name        string   `long:"name" description:"match a torrent name (regex)"`
+	Tracker     string   `short:"t" long:"tracker" description:"match a tracker (regex)"`
+	Error       string   `short:"e" long:"errors" description:"torrents with error matching string (regex)"`
+	DownloadDir string   `short:"d" long:"download-dir" description:"match on download directory (regex)"`
 }
 
 // Instance is used to hold all data required for a filter.
@@ -48,15 +49,19 @@ func New(opts Options, conf *config.Config) *Instance {
 	}
 
 	if opts.Tracker != "" {
-		expressions = append(expressions, fmt.Sprintf("tracker == \"%s\"", opts.Tracker))
+		expressions = append(expressions, fmt.Sprintf("tracker ~ \"%s\"", opts.Tracker))
 	}
 
 	if opts.Error != "" {
-		expressions = append(expressions, fmt.Sprintf("error == \"%s\"", opts.Error))
+		expressions = append(expressions, fmt.Sprintf("error ~ \"%s\"", opts.Error))
 	}
 
 	if opts.DownloadDir != "" {
-		expressions = append(expressions, fmt.Sprintf("downloadDir == \"%s\"", opts.DownloadDir))
+		expressions = append(expressions, fmt.Sprintf("downloadDir ~ \"%s\"", opts.DownloadDir))
+	}
+
+	if opts.Name != "" {
+		expressions = append(expressions, fmt.Sprintf("name ~ \"%s\"", opts.Name))
 	}
 
 	filter := Instance{
