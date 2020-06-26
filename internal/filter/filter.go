@@ -23,63 +23,28 @@ type Options struct {
 	Incomplete bool     `short:"i" long:"incomplete" description:"only incomplete torrents"`
 }
 
-type filterFunc struct {
-	predicate func(*transmissionrpc.Torrent, string) bool
-	set       interface{}
-	args      []string
-}
-
 // Instance is used to hold all data required for a filter.
 type Instance struct {
 	conf        *config.Config
 	opts        Options
-	filterFuncs []filterFunc
+	expressions []string
 	Args        []string
 }
 
 // New returns a new filter based on the options passed.
 func New(opts Options, conf *config.Config) *Instance {
+	expressions := opts.Filter
+	args := make([]string, 0)
+	if opts.Incomplete {
+		expressions = append(expressions, "incomplete")
+		args = append(args, "leftUntilDone")
+	}
 	filter := Instance{
-		opts: opts,
-		conf: conf,
-		filterFuncs: []filterFunc{
-			{
-				predicate: func(t *transmissionrpc.Torrent, v string) bool {
-					return *t.LeftUntilDone > 0
-				},
-				set:  &opts.Incomplete,
-				args: []string{"leftUntilDone"},
-			},
-		},
-		Args: make([]string, 0),
+		conf:        conf,
+		expressions: expressions,
+		Args:        args,
 	}
-	argsSet := make(map[string]struct{})
-
-	for _, i := range filter.filterFuncs {
-		if set(i.set) {
-			for _, arg := range i.args {
-				argsSet[arg] = struct{}{}
-			}
-		}
-	}
-
-	for v := range argsSet {
-		filter.Args = append(filter.Args, v)
-	}
-
 	return &filter
-}
-
-func set(set interface{}) bool {
-	switch v := set.(type) {
-	case *bool:
-		return *v
-	default:
-		fmt.Fprintln(os.Stderr, "Fatal internal error: unknown filter type")
-		os.Exit(1)
-	}
-
-	return false
 }
 
 func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment {
@@ -95,11 +60,11 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 	trackers := make([]object.Object, len(t.Trackers))
 	trackerStrings := make([]object.String, len(t.Trackers))
 	for i, tracker := range t.Trackers {
-		url, err := url.Parse(tracker.Announce)
+		URL, err := url.Parse(tracker.Announce)
 		if err != nil {
 			continue
 		}
-		trackerStrings[i] = object.String{Value: url.Hostname()}
+		trackerStrings[i] = object.String{Value: URL.Hostname()}
 		trackers[i] = &trackerStrings[i]
 	}
 	env.Set("trackers", &object.Array{Elements: trackers})
@@ -120,8 +85,10 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 	return env
 }
 
-func (f *Instance) checkFilterExpression(torrent *transmissionrpc.Torrent) bool {
-	for _, expr := range f.opts.Filter {
+// CheckFilter checks if the supplied torrent matches after filters.
+func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
+	env := f.envForTorrent(torrent)
+	for _, expr := range f.expressions {
 		l := lexer.New(expr)
 		p := parser.New(l)
 		program := p.ParseProgram()
@@ -136,7 +103,7 @@ func (f *Instance) checkFilterExpression(torrent *transmissionrpc.Torrent) bool 
 			os.Exit(1)
 		}
 
-		result := evaluator.Eval(program, f.envForTorrent(torrent))
+		result := evaluator.Eval(program, env)
 		switch v := result.(type) {
 		case *object.Boolean:
 			if !v.Value {
@@ -153,21 +120,4 @@ func (f *Instance) checkFilterExpression(torrent *transmissionrpc.Torrent) bool 
 		}
 	}
 	return true
-}
-
-// CheckFilter checks if the supplied torrent matches after filters.
-func (f *Instance) CheckFilter(torrent *transmissionrpc.Torrent) bool {
-	match := true
-
-	for _, fi := range f.filterFuncs {
-		switch v := fi.set.(type) {
-		case *bool:
-			if *v && !fi.predicate(torrent, "") {
-				match = false
-			}
-		}
-	}
-
-	match = f.checkFilterExpression(torrent)
-	return match
 }
