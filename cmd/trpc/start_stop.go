@@ -37,7 +37,7 @@ func Start(c *Command) {
 				}
 			}
 			c.status("Started torrent", torrent)
-		})
+		}, nil, false)
 }
 
 type stopOptions struct {
@@ -60,5 +60,5 @@ func Stop(c *Command) {
 				}
 			}
 			c.status("Stopped torrent", torrent)
-		})
+		}, nil, false)
 }

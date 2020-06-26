@@ -46,5 +46,5 @@ func Move(c *Command) {
 			}
 		}
 		c.status("Moving torrent", torrent)
-	})
+	}, nil, false)
 }

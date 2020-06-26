@@ -93,6 +93,14 @@ trpc list -f '!complete' -f 'size > 1 GiB'
 trpc list -f 'incomplete && size > 1 GiB'
 ```
 
+### Sorting
+
+* by size, name, id, ratio, age, have (amount of bytes downloaded), upload, progress
+```sh
+# Sort by size descending
+trpc list --sort size -r
+```
+
 ### Torrents can be selected by ID or filename
 
 Unlike `transmission-remote`, you can refer to a torrent by its filename.
@@ -120,13 +128,6 @@ $ trpc stop --incomplete ~/torrent/recent/*
 
 `watch`: Show a progress bar for incomplete active torrents
 
-### Sorting
-
-* by size
-
-* by name
-
-* by id
 
 ## Planned features (possible, distant future)
 

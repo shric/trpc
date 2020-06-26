@@ -85,21 +85,20 @@ func (torrent Torrent) eta() string {
 	return etastr(*torrent.original.Eta)
 }
 
-func (torrent Torrent) have() int64 {
-	return int64(torrent.SizeWhenDone.Byte()) - torrent.LeftUntilDone
+func Have(t *transmissionrpc.Torrent) int64 {
+	return int64(t.SizeWhenDone.Byte()) - *t.LeftUntilDone
+
 }
 
-func (torrent Torrent) progress() float64 {
-	if torrent.RecheckProgress != 0 {
-		return 100.0 * torrent.RecheckProgress
+func Progress(t *transmissionrpc.Torrent) float64 {
+	if *t.RecheckProgress != 0.0 {
+		return 100.0 * *t.RecheckProgress
 	}
-
-	return 100.0 * float64(torrent.have()) / torrent.SizeWhenDone.Byte()
+	return 100.0 * float64(Have(t)) / t.SizeWhenDone.Byte()
 }
 
-func (torrent Torrent) ratio() float64 {
-	// Returns +Inf on positive/0 or NaN on 0/0.
-	return float64(torrent.UploadedEver) / torrent.SizeWhenDone.Byte()
+func Ratio(t *transmissionrpc.Torrent) float64 {
+	return float64(*t.UploadedEver) / t.SizeWhenDone.Byte()
 }
 
 func Age(t *transmissionrpc.Torrent) int64 {
@@ -153,11 +152,11 @@ func (torrent *Torrent) UpdateTotal(result *Torrent) {
 	torrent.down += result.down
 	torrent.SizeWhenDone += result.SizeWhenDone
 	torrent.LeftUntilDone += result.LeftUntilDone
-	torrent.Percent = torrent.progress()
+	torrent.Percent = Progress(result.original)
 	torrent.Up = fmt.Sprintf("%7.1f", torrent.up/float64(KiB))
 	torrent.Down = fmt.Sprintf("%7.1f", torrent.down/float64(KiB))
 	torrent.UploadedEver += result.UploadedEver
-	torrent.Ratio = torrent.ratio()
+	torrent.Ratio = Ratio(result.original)
 
 	if torrent.LeftUntilDone != 0 && torrent.down != 0 {
 		torrent.Eta = etastr(torrent.LeftUntilDone / int64(torrent.down))
@@ -191,13 +190,13 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Confi
 		torrent.Error = "*"
 	}
 
-	torrent.Percent = torrent.progress()
+	torrent.Percent = Progress(torrent.original)
 	torrent.Eta = torrent.eta()
 	torrent.up = float64(*torrent.original.RateUpload)
 	torrent.Up = fmt.Sprintf("%7.1f", torrent.up/float64(KiB))
 	torrent.down = float64(*torrent.original.RateDownload)
 	torrent.Down = fmt.Sprintf("%7.1f", torrent.down/float64(KiB))
-	torrent.Ratio = torrent.ratio()
+	torrent.Ratio = Ratio(torrent.original)
 	torrent.Priority = Priority(torrent.original)
 	torrent.Trackershortname = torrent.trackershortname(conf)
 

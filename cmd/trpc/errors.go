@@ -27,5 +27,5 @@ func Errors(c *Command) {
 			if *torrent.Error != 0 {
 				fmt.Printf("ID: %5d %s:\n\t%s\n", *torrent.ID, *torrent.Name, *torrent.ErrorString)
 			}
-		})
+		}, nil, false)
 }

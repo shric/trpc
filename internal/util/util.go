@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
+	"strings"
+
+	"github.com/shric/trpc/internal/torrent"
 
 	"github.com/shric/trpc/internal/config"
 
@@ -85,9 +89,39 @@ func getids(client *transmissionrpc.Client, fnames []string) []int64 {
 	return ids
 }
 
+func sortTorrents(torrents []*transmissionrpc.Torrent, sortField string, reverse bool) {
+	sort.SliceStable(torrents, func(i, j int) bool {
+		x := torrents[i]
+		y := torrents[j]
+		if reverse {
+			x, y = y, x
+		}
+		switch sortField {
+		case "age":
+			return torrent.Age(x) < torrent.Age(y)
+		case "have":
+			return torrent.Have(x) < torrent.Have(y)
+		case "id":
+			return *x.ID < *y.ID
+		case "name":
+			return strings.ToLower(*x.Name) < strings.ToLower(*y.Name)
+		case "progress":
+			return torrent.Progress(x) < torrent.Progress(y)
+		case "ratio":
+			return torrent.Ratio(x) < torrent.Ratio(y)
+		case "size":
+			return x.SizeWhenDone.Byte() < y.SizeWhenDone.Byte()
+		case "uploaded":
+			return *x.UploadedEver < *y.UploadedEver
+		default:
+			return *x.ID < *y.ID
+		}
+	})
+}
+
 // ProcessTorrents runs the supplied function over all torrents matching the args and filters.
 func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Options, args []string,
-	fields []string, do func(torrent *transmissionrpc.Torrent),
+	fields []string, do func(torrent *transmissionrpc.Torrent), sortField *string, reverse bool,
 ) {
 	ids := make([]int64, 0, len(args))
 
@@ -113,6 +147,10 @@ func ProcessTorrents(client *transmissionrpc.Client, filterOptions filter.Option
 	}
 
 	torrents, err := client.TorrentGet(fields, ids)
+
+	if sortField != nil {
+		sortTorrents(torrents, *sortField, reverse)
+	}
 
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

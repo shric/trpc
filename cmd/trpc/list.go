@@ -41,7 +41,9 @@ func format(torrent *torrent.Torrent, _ *config.Config) string {
 
 type listOptions struct {
 	filter.Options `group:"filters"`
-	NoTotals       bool `short:"n" long:"no-totals" description:"suppress output of totals"`
+	NoTotals       bool   `short:"n" long:"no-totals" description:"suppress output of totals"`
+	Sort           string `long:"sort" description:"sort" choice:"size" choice:"name" choice:"id" choice:"ratio" choice:"have" choice:"progress" choice:"uploaded" choice:"age"`
+	Reverse        bool   `short:"r" long:"reverse" description:"reverse sort order"`
 }
 
 // List provides a list of all or selected torrents.
@@ -60,6 +62,11 @@ func List(c *Command) {
 	}
 
 	linePrinted := false
+	var sortField *string
+	if opts.Sort != "" {
+		sortField = &opts.Sort
+	}
+
 	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
 		func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 			result := torrent.NewFrom(transmissionrpcTorrent, conf)
@@ -68,7 +75,7 @@ func List(c *Command) {
 			formattedTorrent := format(result, conf)
 			fmt.Println(formattedTorrent)
 			linePrinted = true
-		})
+		}, sortField, opts.Reverse)
 
 	if !opts.NoTotals && linePrinted {
 		formattedTotal := format(total, conf)

@@ -39,5 +39,5 @@ func Rm(c *Command) {
 				}
 			}
 			c.status("Removed torrent", torrent)
-		})
+		}, nil, false)
 }

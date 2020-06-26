@@ -35,5 +35,5 @@ func Verify(c *Command) {
 				}
 			}
 			c.status("Verifying torrent", torrent)
-		})
+		}, nil, false)
 }
