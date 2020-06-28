@@ -13,12 +13,12 @@ import (
 )
 
 const delayMillis = 200
-const KiB = 1024
 
 type watchOptions struct {
 	filter.Options `group:"filters"`
 }
 
+// Watch watches the torrents until they're downloaded, giving progress.
 func Watch(c *Command) {
 	opts, ok := c.Options.(watchOptions)
 	optionsCheck(ok)

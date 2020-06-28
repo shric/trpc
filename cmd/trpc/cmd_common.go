@@ -120,3 +120,14 @@ func optionsCheck(ok bool) {
 		os.Exit(1)
 	}
 }
+
+// Constants for binary units.
+const (
+	_ = 1 << (10 * iota)
+	KiB
+	MiB
+	GiB
+	TiB
+	PiB
+	EiB
+)
