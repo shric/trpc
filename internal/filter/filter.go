@@ -27,7 +27,7 @@ type Options struct {
 	Name        string   `long:"name" description:"match a torrent name (regex)"`
 	Tracker     string   `short:"t" long:"tracker" description:"match a tracker (regex)"`
 	Error       string   `short:"e" long:"errors" description:"torrents with error matching string (regex)"`
-	DownloadDir string   `short:"d" long:"download-dir" description:"match on download directory"`
+	DownloadDir string   `long:"download-dir" description:"match on download directory"`
 }
 
 // Instance is used to hold all data required for a filter.
