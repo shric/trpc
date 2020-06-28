@@ -15,8 +15,8 @@ type limitOptions struct {
 	filter.Options `group:"filters"`
 	ForceAll       bool  `long:"force-all" description:"Really limit all torrents"`
 	Session        bool  `long:"session" short:"s" description:"Apply the limit to the session instead of torrent(s)"`
-	DownLimit      int64 `long:"down" short:"d" description:"Set download limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
-	UpLimit        int64 `long:"up" short:"u" description:"Set upload limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
+	DownLimit      int64 `long:"down" description:"Set download limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
+	UpLimit        int64 `long:"up" description:"Set upload limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
 }
 
 // SessionLimit handles the limit command when --session is given.

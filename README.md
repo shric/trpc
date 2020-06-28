@@ -159,6 +159,6 @@ go install github.com/shric/trpc/cmd/trpc
 | trpc stop 123           | transmission-remote -t 123 -S                     | Stop torrent 123                               |
 | trpc list *             |                                                   | List all running torrents in the current dir   |
 | trpc which filename.iso |                                                   | Identify which torrent filename.iso belongs to |
-| trpc limit -d 50 123    | transmission-remote -t 123 -d 50                  | Set torrent 123 download limit to 50KB/sec     |
-| trpc limit -d 0 123     | transmission-remote -t 123 -D                     | Remove download limit from torrent 123         |
-| trpc limit -d 50 -s     | transmission-remote -d 50                         | Set global download limit to 50KB/sec          |
+| trpc limit --down 50 123| transmission-remote -t 123 -d 50                  | Set torrent 123 download limit to 50KB/sec     |
+| trpc limit --down 0 123 | transmission-remote -t 123 -D                     | Remove download limit from torrent 123         |
+| trpc limit --down 50 -s | transmission-remote -d 50                         | Set global download limit to 50KB/sec          |
