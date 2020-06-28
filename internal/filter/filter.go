@@ -23,6 +23,7 @@ import (
 type Options struct {
 	Filter      []string `short:"f" long:"filter" description:"apply filter expression" unquote:"false"`
 	Incomplete  bool     `short:"i" long:"incomplete" description:"only incomplete torrents"`
+	Complete    bool     `short:"c" long:"complete" description:"only complete torrents"`
 	Active      bool     `short:"a" long:"active" description:"torrents currently uploading or downloading"`
 	Name        string   `long:"name" description:"match a torrent name (regex)"`
 	Tracker     string   `short:"t" long:"tracker" description:"match a tracker (regex)"`
@@ -41,6 +42,10 @@ type Instance struct {
 func New(opts Options, conf *config.Config) *Instance {
 	expressions := opts.Filter
 	args := make([]string, 0)
+
+	if opts.Complete {
+		expressions = append(expressions, "complete")
+	}
 
 	if opts.Incomplete {
 		expressions = append(expressions, "incomplete")
