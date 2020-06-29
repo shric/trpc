@@ -55,6 +55,8 @@ trpc start ~/torrent/foo/*
 
 `version`: show version
 
+`watch`: Show progress for incomplete active torrents, quit when done
+
 `which`: show which torrents (and file ID) given file(s) belong to.
 
 ### Filters
@@ -83,7 +85,7 @@ trpc list -f 'up > 0 || down > 0'
 trpc list -f 'tracker == "foo"'
 
 # equivalent of trpc list -e 'unregistered torrent'
-trpc list -f 'error == "unregistered torrent"
+trpc list -f 'error == "unregistered torrent"'
 
 # equivalent of trpc list -d '/home/chris/images'
 trpc list -f 'downloadDir == "/home/chris/images"'
@@ -127,7 +129,6 @@ $ trpc stop --incomplete ~/torrent/recent/*
 
 `sessioninfo`: Show session information
 
-`watch`: Show a progress bar for incomplete active torrents
 
 
 ## Planned features (possible, distant future)
