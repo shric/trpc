@@ -12,6 +12,9 @@ import (
 )
 
 type moveOptions struct {
+	Positional struct {
+		Files []string `positional-arg-name:"torrent" description:"0 or more torrents with destination at the end"`
+	} `positional-args:"true"`
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really move all torrents"`
 }
@@ -28,17 +31,17 @@ func Move(c *Command) {
 	opts, ok := c.Options.(moveOptions)
 	optionsCheck(ok)
 
-	if len(c.PositionalArgs) == 0 {
+	if len(opts.Positional.Files) == 0 {
 		fmt.Fprintln(os.Stderr, "move: Destination required")
 		return
 	}
 
-	if len(c.PositionalArgs) == 1 && !opts.ForceAll {
+	if len(opts.Positional.Files) == 1 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to move all torrents")
 		return
 	}
 
-	fnames, destination := getFnamesAndDest(c.PositionalArgs)
+	fnames, destination := getFnamesAndDest(opts.Positional.Files)
 	util.ProcessTorrents(c.Client, opts.Options, fnames, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSetLocation(*torrent.ID, destination, true)

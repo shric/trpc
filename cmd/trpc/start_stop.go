@@ -10,6 +10,7 @@ import (
 )
 
 type startOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 	Now            bool `long:"now" description:"Start torrent now, bypassing the queue"`
 }
@@ -25,7 +26,7 @@ func Start(c *Command) {
 		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status != transmissionrpc.TorrentStatusStopped {
 				return
@@ -41,6 +42,7 @@ func Start(c *Command) {
 }
 
 type stopOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 }
 
@@ -48,7 +50,7 @@ type stopOptions struct {
 func Stop(c *Command) {
 	opts, ok := c.Options.(stopOptions)
 	optionsCheck(ok)
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status == transmissionrpc.TorrentStatusStopped {
 				return

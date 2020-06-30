@@ -10,6 +10,7 @@ import (
 )
 
 type rmOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 	ForceAll       bool `long:"force-all" description:"Really allow all torrents to be removed"`
 	Nuke           bool `long:"nuke" description:"Delete the data associated with the torrent"`
@@ -20,12 +21,12 @@ func Rm(c *Command) {
 	opts, ok := c.Options.(rmOptions)
 	optionsCheck(ok)
 
-	if len(c.PositionalArgs) == 0 && !opts.ForceAll {
+	if len(opts.Positional.Torrents) == 0 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to delete all torrents!")
 		return
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{

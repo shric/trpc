@@ -15,6 +15,7 @@ import (
 const delayMillis = 200
 
 type watchOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 }
 
@@ -29,7 +30,7 @@ func Watch(c *Command) {
 
 	IDs := make([]int64, 0)
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status == transmissionrpc.TorrentStatusStopped {
 				return

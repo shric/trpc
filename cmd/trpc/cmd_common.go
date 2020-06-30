@@ -16,6 +16,20 @@ type commonOptions struct {
 	Debug  bool `short:"D" long:"debug" description:"Debug -- output the reply from server to stderr"`
 }
 
+// torrentOptions declares the positional command line argument for specifying 0 or more torrents.
+type torrentOptions struct {
+	Positional struct {
+		Torrents []string `positional-arg-name:"torrent" description:"torrent ID or filename within torrent"`
+	} `positional-args:"true"`
+}
+
+// fileOptions declares the positional command line argument for specifying 0 or more filenames.
+type fileOptions struct {
+	Positional struct {
+		Files []string `positional-arg-name:"file" description:"filename"`
+	} `positional-args:"true"`
+}
+
 type options struct {
 	Common  commonOptions `group:"global options"`
 	Add     addOptions    `command:"add" alias:"a" description:"Add torrents"`

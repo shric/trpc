@@ -12,6 +12,7 @@ import (
 )
 
 type limitOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 	ForceAll       bool  `long:"force-all" description:"Really limit all torrents"`
 	Session        bool  `long:"session" short:"s" description:"Apply the limit to the session instead of torrent(s)"`
@@ -71,7 +72,7 @@ func SessionLimit(c *Command) {
 func TorrentLimit(c *Command) {
 	opts, ok := c.Options.(limitOptions)
 	optionsCheck(ok)
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		IDs := make([]int64, 1)
 		IDs[0] = *torrent.ID
 
@@ -125,7 +126,7 @@ func Limit(c *Command) {
 		return
 	}
 
-	if len(c.PositionalArgs) == 0 && !opts.ForceAll && !opts.Session {
+	if len(opts.Positional.Torrents) == 0 && !opts.ForceAll && !opts.Session {
 		fmt.Fprintln(os.Stderr,
 			"Use --force-all if you really want to limit all torrents, use --session if you want to apply a session limit")
 		return

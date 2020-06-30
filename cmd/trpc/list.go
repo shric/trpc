@@ -40,6 +40,7 @@ func format(torrent *torrent.Torrent, _ *config.Config) string {
 }
 
 type listOptions struct {
+	torrentOptions
 	filter.Options `group:"filters"`
 	NoTotals       bool   `short:"n" long:"no-totals" description:"suppress output of totals"`
 	Sort           string `long:"sort" description:"sort" choice:"size" choice:"name" choice:"id" choice:"ratio" choice:"have" choice:"progress" choice:"uploaded" choice:"age"`
@@ -68,7 +69,7 @@ func List(c *Command) {
 		sortField = &opts.Sort
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, c.PositionalArgs, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
 		func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 			result := torrent.NewFrom(transmissionrpcTorrent, conf)
 			total.UpdateTotal(result)

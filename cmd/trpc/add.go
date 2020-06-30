@@ -12,6 +12,9 @@ import (
 )
 
 type addOptions struct {
+	Positional struct {
+		Files []string `positional-arg-name:"file" description:"filename or URL"`
+	} `positional-args:"true"`
 	Paused      bool   `short:"p" long:"paused" description:"add torrent paused"`
 	DownloadDir string `short:"d" long:"download-dir" dscription:"download directory"`
 }
@@ -26,7 +29,7 @@ func Add(c *Command) {
 
 	var dummyID int64
 
-	if len(c.PositionalArgs) == 0 {
+	if len(opts.Positional.Files) == 0 {
 		fmt.Fprintln(os.Stderr, "Please supply at least one file or URL")
 		os.Exit(1)
 	}
@@ -36,7 +39,7 @@ func Add(c *Command) {
 		opts.DownloadDir = conf.Settings.Get("default_download_dir").(string)
 	}
 
-	for _, arg := range c.PositionalArgs {
+	for _, arg := range opts.Positional.Files {
 		var torrent *transmissionrpc.Torrent
 
 		url, err := url.Parse(arg)

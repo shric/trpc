@@ -8,17 +8,18 @@ import (
 )
 
 type whichOptions struct {
+	fileOptions
 	Missing bool `long:"missing" description:"Show only unassociated files/paths"`
 }
 
 // Which implements the which command (find which torrent a file/path is associated with.
 func Which(c *Command) {
-	_, ok := c.Options.(whichOptions)
+	opts, ok := c.Options.(whichOptions)
 	optionsCheck(ok)
 
 	finder := util.NewFinder(c.Client)
 
-	for _, f := range c.PositionalArgs {
+	for _, f := range opts.Positional.Files {
 		torrent, fileID := finder.Find(f)
 		if torrent != nil {
 			fmt.Printf("%s belongs to torrent %d: %s (File ID %d)\n",
