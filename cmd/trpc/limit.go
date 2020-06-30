@@ -132,6 +132,12 @@ func Limit(c *Command) {
 		return
 	}
 
+	if opts.Session && len(opts.Positional.Torrents) != 0 {
+		fmt.Fprintln(os.Stderr,
+			"Do not specify any torrents if using --session")
+		return
+	}
+
 	if opts.Session {
 		SessionLimit(c)
 	} else {
