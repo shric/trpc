@@ -14,10 +14,11 @@ import (
 type setOptions struct {
 	torrentOptions
 	filter.Options `group:"filters"`
-	ForceAll       bool  `long:"force-all" description:"Really limit all torrents"`
-	Session        bool  `long:"session" short:"s" description:"Apply the limit to the session instead of torrent(s)"`
-	DownLimit      int64 `long:"down" description:"Set download limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
-	UpLimit        int64 `long:"up" description:"Set upload limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
+	ForceAll       bool   `long:"force-all" description:"Really limit all torrents"`
+	Session        bool   `long:"session" short:"s" description:"Apply the limit to the session instead of torrent(s)"`
+	DownLimit      int64  `long:"down" description:"Set download limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
+	UpLimit        int64  `long:"up" description:"Set upload limit (0 for unlimited)" default:"9223372036854775807" default-mask:"-"`
+	Priority       string `long:"priority" short:"p" description:"Set bandwidth priority" choice:"low" choice:"normal" choice:"high"`
 }
 
 // SessionLimit handles the limit command when --session is given.
@@ -41,7 +42,7 @@ func SessionLimit(c *Command) {
 		speedLimitDownEnabled = false
 		payload.SpeedLimitDownEnabled = &speedLimitDownEnabled
 
-		c.statusf("Removed global download limit")
+		c.statusf("Removing global download limit")
 	}
 
 	switch {
@@ -56,7 +57,7 @@ func SessionLimit(c *Command) {
 		speedLimitUpEnabled = false
 		payload.SpeedLimitUpEnabled = &speedLimitUpEnabled
 
-		c.statusf("Removed global upload limit")
+		c.statusf("Removing global upload limit")
 	}
 
 	if !c.CommonOptions.DryRun {
@@ -70,18 +71,22 @@ func SessionLimit(c *Command) {
 
 func setUploadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOptions) string {
 	uploadLimited := false
+
 	switch {
 	case opts.UpLimit == math.MaxInt64:
 	case opts.UpLimit > 0:
 		uploadLimited = true
 		payload.UploadLimit = &opts.UpLimit
 		payload.UploadLimited = &uploadLimited
-		return fmt.Sprintf("Limiting upload to %d KB/sec for", opts.UpLimit)
+
+		return fmt.Sprintf("Limiting   upload to %d KB/sec", opts.UpLimit)
 	case opts.UpLimit <= 0:
 		uploadLimited = false
 		payload.UploadLimited = &uploadLimited
-		return "Removed upload limit for"
+
+		return "Removing upload limit"
 	}
+
 	return ""
 }
 
@@ -94,12 +99,40 @@ func setDownloadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOption
 		downloadLimited = true
 		payload.DownloadLimit = &opts.DownLimit
 		payload.DownloadLimited = &downloadLimited
-		return fmt.Sprintf("Limited download to %d KB/sec for ", opts.DownLimit)
+
+		return fmt.Sprintf("Limiting download to %d KB/sec", opts.DownLimit)
 	case opts.DownLimit <= 0:
 		downloadLimited = false
 		payload.DownloadLimited = &downloadLimited
-		return "Removed download limit for"
+
+		return "Removing download limit"
 	}
+
+	return ""
+}
+
+const (
+	trPriLow    = -1
+	trPriNormal = 0
+	trPriHigh   = 1
+)
+
+func setPriority(payload *transmissionrpc.TorrentSetPayload, opts setOptions) string {
+	var priority int64
+	payload.BandwidthPriority = &priority
+
+	switch opts.Priority {
+	case "high":
+		priority = trPriHigh
+		return "Setting  priority to high"
+	case "normal":
+		priority = trPriNormal
+		return "Setting  priority to normal"
+	case "low":
+		priority = trPriLow
+		return "Setting  priority to low"
+	}
+
 	return ""
 }
 
@@ -107,16 +140,33 @@ func setDownloadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOption
 func TorrentLimit(c *Command) {
 	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
+
+	firstTorrent := true
+
 	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		IDs := make([]int64, 1)
 		IDs[0] = *torrent.ID
 
 		payload := &transmissionrpc.TorrentSetPayload{IDs: IDs}
-		message := setDownloadLimit(payload, opts)
-		c.status(message, torrent)
 
-		message = setUploadLimit(payload, opts)
-		c.status(message, torrent)
+		if message := setDownloadLimit(payload, opts); message != "" && firstTorrent {
+			c.statusf(message)
+		}
+
+		if message := setUploadLimit(payload, opts); message != "" && firstTorrent {
+			c.statusf(message)
+		}
+
+		if message := setPriority(payload, opts); message != "" && firstTorrent {
+			c.statusf(message)
+		}
+
+		if firstTorrent {
+			fmt.Println()
+		}
+
+		firstTorrent = false
+		c.status("", torrent)
 
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSet(payload)
@@ -133,14 +183,20 @@ func Set(c *Command) {
 	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
 
-	if opts.UpLimit == math.MaxInt64 && opts.DownLimit == math.MaxInt64 {
-		fmt.Fprint(os.Stderr, "Must specify either --down or --up\n")
+	if opts.UpLimit == math.MaxInt64 && opts.DownLimit == math.MaxInt64 && opts.Priority == "" {
+		fmt.Fprint(os.Stderr, "Must specify either --down, --up, or --priority\n")
 		return
 	}
 
 	if len(opts.Pos.Torrents) == 0 && !opts.ForceAll && !opts.Session {
 		fmt.Fprintln(os.Stderr,
-			"Use --force-all if you really want to limit all torrents, use --session if you want to apply a session limit")
+			"Use --force-all if you really want to set all torrents, use --session if you want to apply a session limit")
+		return
+	}
+
+	if opts.Session && opts.Priority != "" {
+		fmt.Fprintf(os.Stderr,
+			"--session isn't compatible with --priority. Priorities can only be set on torrents or files (with fset command)")
 		return
 	}
 
