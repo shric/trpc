@@ -11,7 +11,7 @@ import (
 	"github.com/shric/trpc/internal/filter"
 )
 
-type limitOptions struct {
+type setOptions struct {
 	torrentOptions
 	filter.Options `group:"filters"`
 	ForceAll       bool  `long:"force-all" description:"Really limit all torrents"`
@@ -22,7 +22,7 @@ type limitOptions struct {
 
 // SessionLimit handles the limit command when --session is given.
 func SessionLimit(c *Command) {
-	opts, ok := c.Options.(limitOptions)
+	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
 
 	payload := &transmissionrpc.SessionArguments{}
@@ -70,7 +70,7 @@ func SessionLimit(c *Command) {
 
 // TorrentLimit handles the limit command when --session isn't given.
 func TorrentLimit(c *Command) {
-	opts, ok := c.Options.(limitOptions)
+	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
 	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		IDs := make([]int64, 1)
@@ -116,9 +116,9 @@ func TorrentLimit(c *Command) {
 	}, nil, false)
 }
 
-// Limit implements the limit command.
-func Limit(c *Command) {
-	opts, ok := c.Options.(limitOptions)
+// Set implements the limit command.
+func Set(c *Command) {
+	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
 
 	if opts.UpLimit == math.MaxInt64 && opts.DownLimit == math.MaxInt64 {

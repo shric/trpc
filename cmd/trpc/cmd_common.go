@@ -34,11 +34,11 @@ type options struct {
 	Common  commonOptions `group:"global options"`
 	Add     addOptions    `command:"add" alias:"a" description:"Add torrents"`
 	Errors  errorsOptions `command:"errors" alias:"e" description:"Show torrent error strings"`
-	Limit   limitOptions  `command:"limit" description:"Limit torrent priorities/speeds or session speeds"`
 	List    listOptions   `command:"list" alias:"l" description:"List torrents"`
 	Move    moveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Rename  renameOptions `command:"rename" description:"Rename torrent file"`
 	Rm      rmOptions     `command:"rm" alias:"r" description:"Remove torrents"`
+	Set     setOptions    `command:"set" description:"Set torrent priorities/speeds or session speeds"`
 	Start   startOptions  `command:"start" description:"Start torrents"`
 	Stop    stopOptions   `command:"stop" description:"Start torrents"`
 	Verify  verifyOptions `command:"verify" alias:"hash" description:"Verify torrents (hash check)"`
@@ -83,11 +83,11 @@ func Run() {
 	commandInstances := map[string]CommandInstance{
 		"add":     {Runner: Add, Options: args.Add},
 		"errors":  {Runner: Errors, Options: args.Errors},
-		"limit":   {Runner: Limit, Options: args.Limit},
 		"list":    {Runner: List, Options: args.List},
 		"move":    {Runner: Move, Options: args.Move},
 		"rename":  {Runner: Rename, Options: args.Rename},
 		"rm":      {Runner: Rm, Options: args.Rm},
+		"set":     {Runner: Set, Options: args.Set},
 		"start":   {Runner: Start, Options: args.Start},
 		"stop":    {Runner: Stop, Options: args.Stop},
 		"verify":  {Runner: Verify, Options: args.Verify},
