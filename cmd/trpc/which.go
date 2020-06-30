@@ -19,7 +19,7 @@ func Which(c *Command) {
 
 	finder := util.NewFinder(c.Client)
 
-	for _, f := range opts.Positional.Files {
+	for _, f := range opts.Pos.Files {
 		torrent, fileID := finder.Find(f)
 		if torrent != nil {
 			fmt.Printf("%s belongs to torrent %d: %s (File ID %d)\n",

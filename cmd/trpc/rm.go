@@ -21,12 +21,12 @@ func Rm(c *Command) {
 	opts, ok := c.Options.(rmOptions)
 	optionsCheck(ok)
 
-	if len(opts.Positional.Torrents) == 0 && !opts.ForceAll {
+	if len(opts.Pos.Torrents) == 0 && !opts.ForceAll {
 		fmt.Fprintln(os.Stderr, "Use --force-all if you really want to delete all torrents!")
 		return
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if !c.CommonOptions.DryRun {
 				err := c.Client.TorrentRemove(&transmissionrpc.TorrentRemovePayload{

@@ -26,7 +26,7 @@ func Start(c *Command) {
 		startFunc = c.Client.TorrentStartNowIDs
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status != transmissionrpc.TorrentStatusStopped {
 				return
@@ -50,7 +50,7 @@ type stopOptions struct {
 func Stop(c *Command) {
 	opts, ok := c.Options.(stopOptions)
 	optionsCheck(ok)
-	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:],
 		func(torrent *transmissionrpc.Torrent) {
 			if *torrent.Status == transmissionrpc.TorrentStatusStopped {
 				return

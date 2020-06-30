@@ -107,7 +107,7 @@ func setDownloadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOption
 func TorrentLimit(c *Command) {
 	opts, ok := c.Options.(setOptions)
 	optionsCheck(ok)
-	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
+	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:], func(torrent *transmissionrpc.Torrent) {
 		IDs := make([]int64, 1)
 		IDs[0] = *torrent.ID
 
@@ -138,13 +138,13 @@ func Set(c *Command) {
 		return
 	}
 
-	if len(opts.Positional.Torrents) == 0 && !opts.ForceAll && !opts.Session {
+	if len(opts.Pos.Torrents) == 0 && !opts.ForceAll && !opts.Session {
 		fmt.Fprintln(os.Stderr,
 			"Use --force-all if you really want to limit all torrents, use --session if you want to apply a session limit")
 		return
 	}
 
-	if opts.Session && len(opts.Positional.Torrents) != 0 {
+	if opts.Session && len(opts.Pos.Torrents) != 0 {
 		fmt.Fprintln(os.Stderr,
 			"Do not specify any torrents if using --session")
 		return

@@ -69,7 +69,7 @@ func List(c *Command) {
 		sortField = &opts.Sort
 	}
 
-	util.ProcessTorrents(c.Client, opts.Options, opts.Positional.Torrents, commonArgs[:],
+	util.ProcessTorrents(c.Client, opts.Options, opts.Pos.Torrents, commonArgs[:],
 		func(transmissionrpcTorrent *transmissionrpc.Torrent) {
 			result := torrent.NewFrom(transmissionrpcTorrent, conf)
 			total.UpdateTotal(result)

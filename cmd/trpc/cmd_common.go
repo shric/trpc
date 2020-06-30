@@ -18,14 +18,14 @@ type commonOptions struct {
 
 // torrentOptions declares the positional command line argument for specifying 0 or more torrents.
 type torrentOptions struct {
-	Positional struct {
+	Pos struct {
 		Torrents []string `positional-arg-name:"torrent" description:"torrent ID or filename within torrent"`
 	} `positional-args:"true"`
 }
 
 // fileOptions declares the positional command line argument for specifying 0 or more filenames.
 type fileOptions struct {
-	Positional struct {
+	Pos struct {
 		Files []string `positional-arg-name:"file" description:"filename"`
 	} `positional-args:"true"`
 }
