@@ -68,6 +68,41 @@ func SessionLimit(c *Command) {
 	}
 }
 
+func setUploadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOptions) string {
+	uploadLimited := false
+	switch {
+	case opts.UpLimit == math.MaxInt64:
+	case opts.UpLimit > 0:
+		uploadLimited = true
+		payload.UploadLimit = &opts.UpLimit
+		payload.UploadLimited = &uploadLimited
+		return fmt.Sprintf("Limiting upload to %d KB/sec for", opts.UpLimit)
+	case opts.UpLimit <= 0:
+		uploadLimited = false
+		payload.UploadLimited = &uploadLimited
+		return "Removed upload limit for"
+	}
+	return ""
+}
+
+func setDownloadLimit(payload *transmissionrpc.TorrentSetPayload, opts setOptions) string {
+	downloadLimited := false
+
+	switch {
+	case opts.DownLimit == math.MaxInt64:
+	case opts.DownLimit > 0:
+		downloadLimited = true
+		payload.DownloadLimit = &opts.DownLimit
+		payload.DownloadLimited = &downloadLimited
+		return fmt.Sprintf("Limited download to %d KB/sec for ", opts.DownLimit)
+	case opts.DownLimit <= 0:
+		downloadLimited = false
+		payload.DownloadLimited = &downloadLimited
+		return "Removed download limit for"
+	}
+	return ""
+}
+
 // TorrentLimit handles the limit command when --session isn't given.
 func TorrentLimit(c *Command) {
 	opts, ok := c.Options.(setOptions)
@@ -77,34 +112,11 @@ func TorrentLimit(c *Command) {
 		IDs[0] = *torrent.ID
 
 		payload := &transmissionrpc.TorrentSetPayload{IDs: IDs}
-		downloadLimited := false
-		uploadLimited := false
+		message := setDownloadLimit(payload, opts)
+		c.status(message, torrent)
 
-		switch {
-		case opts.DownLimit == math.MaxInt64:
-		case opts.DownLimit > 0:
-			downloadLimited = true
-			payload.DownloadLimit = &opts.DownLimit
-			payload.DownloadLimited = &downloadLimited
-			c.status(fmt.Sprintf("Limited download to %d KB/sec for ", opts.DownLimit), torrent)
-		case opts.DownLimit <= 0:
-			downloadLimited = false
-			payload.DownloadLimited = &downloadLimited
-			c.status("Removed download limit for", torrent)
-		}
-
-		switch {
-		case opts.UpLimit == math.MaxInt64:
-		case opts.UpLimit > 0:
-			uploadLimited = true
-			payload.UploadLimit = &opts.UpLimit
-			payload.UploadLimited = &uploadLimited
-			c.status(fmt.Sprintf("Limiting upload to %d KB/sec for", opts.UpLimit), torrent)
-		case opts.UpLimit <= 0:
-			uploadLimited = false
-			payload.UploadLimited = &uploadLimited
-			c.status("Removed upload limit for", torrent)
-		}
+		message = setUploadLimit(payload, opts)
+		c.status(message, torrent)
 
 		if !c.CommonOptions.DryRun {
 			err := c.Client.TorrentSet(payload)
