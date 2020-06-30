@@ -34,7 +34,7 @@ type options struct {
 	Common  commonOptions `group:"global options"`
 	Add     addOptions    `command:"add" alias:"a" description:"Add torrents"`
 	Errors  errorsOptions `command:"errors" alias:"e" description:"Show torrent error strings"`
-	Limit   limitOptions  `command:"limit" description:"Limit torrent or session speeds"`
+	Limit   limitOptions  `command:"limit" description:"Limit torrent priorities/speeds or session speeds"`
 	List    listOptions   `command:"list" alias:"l" description:"List torrents"`
 	Move    moveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Rename  renameOptions `command:"rename" description:"Rename torrent file"`
