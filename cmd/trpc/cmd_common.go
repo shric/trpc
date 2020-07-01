@@ -74,7 +74,7 @@ func Run() {
 	var args = new(options)
 
 	p := flags.NewParser(args, flags.Default)
-	remaining, err := p.Parse()
+	_, err := p.Parse()
 
 	if err != nil {
 		os.Exit(1)
@@ -99,9 +99,8 @@ func Run() {
 	c := client.Connect(args.Common.Debug)
 
 	command := &Command{
-		PositionalArgs: remaining,
-		CommonOptions:  args.Common,
-		Client:         c,
+		CommonOptions: args.Common,
+		Client:        c,
 	}
 
 	command.CommandInstance = commandInstances[p.Active.Name]
