@@ -71,11 +71,10 @@ func (t *Finder) getDownloadDirs() {
 			fullPath := filepath.Join(path, *torrent.Name)
 			eval, err := filepath.EvalSymlinks(fullPath)
 
-			if err != nil {
-				continue
+			if err == nil {
+				fullPath = eval
 			}
 
-			fullPath = eval
 			t.insertCache(fullPath, *torrent.ID, fileIDunknown)
 			t.torrents[*torrent.ID] = torrent
 		}
