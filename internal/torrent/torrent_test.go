@@ -91,11 +91,11 @@ func TestNewFromTracker(t *testing.T) {
 
 func TestNewFromProgress(t *testing.T) {
 	tests := []test{
-		{input: makeTorrent(cunits.Bits(8192), 1, 0.0, 256, 0, "", 0), want: 75.},
-		{input: makeTorrent(cunits.Bits(8192), 1, 0.5, 256, 0, "", 0), want: 50.},
+		{input: makeTorrent(cunits.Bits(8192), 1, 0.0, 256, 0, "", 0), want: int64(75)},
+		{input: makeTorrent(cunits.Bits(8192), 1, 0.5, 256, 0, "", 0), want: int64(50)},
 	}
 	for _, tc := range tests {
-		got := tc.input.Percent
+		got := tc.input.Pct
 		if !reflect.DeepEqual(tc.want, got) {
 			t.Fatalf("expected: %v, got: %v", tc.want, got)
 		}

@@ -7,6 +7,8 @@ github.com/hashicorp/go-cleanhttp v0.5.1 h1:dH3aiDG9Jvb5r5+bYHsikaOUIpcM0xvgMXVo
 github.com/hashicorp/go-cleanhttp v0.5.1/go.mod h1:JpRdi6/HCYpAwUzNwuwqhbovhLtngrth3wmdIIUrZ80=
 github.com/hekmon/cunits/v2 v2.0.2 h1:qnZMfVxBiTgtAXVSMLKxzV1nihS6KzdjDHgh+nS4RgI=
 github.com/hekmon/cunits/v2 v2.0.2/go.mod h1:9r1TycXYXaTmEWlAIfFV8JT+Xo59U96yUJAYHxzii2M=
+github.com/hekmon/cunits/v2 v2.1.0 h1:k6wIjc4PlacNOHwKEMBgWV2/c8jyD4eRMs5mR1BBhI0=
+github.com/hekmon/cunits/v2 v2.1.0/go.mod h1:9r1TycXYXaTmEWlAIfFV8JT+Xo59U96yUJAYHxzii2M=
 github.com/hekmon/transmissionrpc v1.1.1-0.20200621183139-05b4d9c9659e h1:6bcYl6USkGr+LG3B89BL4VDSwASL1uHCltUltcwuquw=
 github.com/hekmon/transmissionrpc v1.1.1-0.20200621183139-05b4d9c9659e/go.mod h1:qkwhsyD/MQSlWvOE1AC92xajwEveAuGsOvTuOBZEuHc=
 github.com/jessevdk/go-flags v1.4.0 h1:4IU2WS7AumrZ/40jfhf4QVDMsQwqA7VEHozFRrGARJA=
@@ -17,6 +19,8 @@ github.com/pelletier/go-toml v1.8.0/go.mod h1:D6yutnOGMveHEPV7VQOuvI/gXY61bv+9bA
 github.com/pkg/term v0.0.0-20200520122047-c3ffed290a03/go.mod h1:Z9+Ul5bCbBKnbCvdOWbLqTHhJiYV414CURZJba6L8qA=
 github.com/shric/monkey v0.8.0 h1:XxoWQIpVNc33TTZAT/qArpmVjXRK6Wcr/XK+RX4PADU=
 github.com/shric/monkey v0.8.0/go.mod h1:yRrbwU/vd5T2zibpl4ALltQkotvwCOK77tpKz8FloxA=
+github.com/slongfield/pyfmt v0.0.0-20180124071345-020a7cb18bca h1:fO9hIZRL+kteo13eh51GqkUdZf/NpMmZsi8ob6b1eOg=
+github.com/slongfield/pyfmt v0.0.0-20180124071345-020a7cb18bca/go.mod h1:41QiOYlRDMkcA4GnlnV0jfYUyqxKHYnUeaQRAvpezw8=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.3.0 h1:clyUAQHOM3G0M3f5vQj7LuJrETvjVot3Z5el9nffUtU=

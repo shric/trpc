@@ -165,12 +165,14 @@ func (torrent *Torrent) UpdateTotal(result *Torrent) {
 	torrent.down += result.down
 	torrent.SizeWhenDone += result.SizeWhenDone
 	torrent.LeftUntilDone += result.LeftUntilDone
-	torrent.Percent = Progress(torrent.original)
+	torrent.Pct = int64(Progress(torrent.original))
 	torrent.Up = fmt.Sprintf("%7.1f", torrent.up/float64(KiB))
 	torrent.Down = fmt.Sprintf("%7.1f", torrent.down/float64(KiB))
 	torrent.UploadedEver += result.UploadedEver
 	torrent.Ratio = Ratio(result.original)
 
+	torrent.Size, torrent.SizeSuffix = torrent.SizeWhenDone.GetHumanSizeAndSuffix()
+	torrent.SizeSuffix = strings.Replace(torrent.SizeSuffix, "i", "", 1)
 	if torrent.LeftUntilDone != 0 && torrent.down != 0 {
 		torrent.Eta = etastr(torrent.LeftUntilDone / int64(torrent.down))
 	}
@@ -213,7 +215,10 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Confi
 		torrent.Error = "*"
 	}
 
-	torrent.Percent = Progress(torrent.original)
+	torrent.Size, torrent.SizeSuffix = torrent.SizeWhenDone.GetHumanSizeAndSuffix()
+	torrent.SizeSuffix = strings.Replace(torrent.SizeSuffix, "i", "", 1)
+
+	torrent.Pct = int64(Progress(torrent.original))
 	torrent.Eta = torrent.eta()
 	torrent.up = float64(*torrent.original.RateUpload)
 	torrent.Up = fmt.Sprintf("%7.1f", torrent.up/float64(KiB))
@@ -238,8 +243,10 @@ type Torrent struct {
 	ID               string
 	Error            string
 	Name             string
-	Percent          float64
+	Pct              int64
 	SizeWhenDone     cunits.Bits
+	Size             float64
+	SizeSuffix       string
 	Eta              string
 	up               float64
 	Up               string

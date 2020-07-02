@@ -1,10 +1,8 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
-	"text/template"
 
 	"github.com/shric/trpc/internal/config"
 	"github.com/shric/trpc/internal/filter"
@@ -12,31 +10,13 @@ import (
 	"github.com/shric/trpc/internal/util"
 
 	"github.com/hekmon/transmissionrpc"
+	"github.com/slongfield/pyfmt"
 )
 
 func format(torrent *torrent.Torrent, _ *config.Config) string {
-	format := `{{printf "%4s" .ID}} ` +
-		`{{.Error}} ` +
-		`{{printf "%6.1f" .Percent}}%  ` +
-		`{{printf "%12s" .SizeWhenDone}} ` +
-		`{{printf "%-8s" .Eta}} ` +
-		`{{printf "%8s" .Up}} ` +
-		`{{printf "%8s" .Down}} ` +
-		`{{printf "%6.1f" .Ratio}} ` +
-		`{{printf "%-6s" .Priority}}  ` +
-		`{{printf "%-4s" .Trackershortname}}  ` +
-		`{{.Name}}`
-
-	var tpl bytes.Buffer
-
-	tmpl := template.Must(template.New("list").Parse(format))
-
-	err := tmpl.Execute(&tpl, torrent)
-	if err != nil {
-		panic(err)
-	}
-
-	return tpl.String()
+	format := "{ID:4}{Error:1} {Pct:5}%  {Size:6.1f} {SizeSuffix:<3} {Eta:<8} {Up:>7} {Down:>7}" +
+		" {Ratio:>6.1f}  {Priority:6} {Trackershortname:4}   {Name}"
+	return pyfmt.Must(format, torrent)
 }
 
 type listOptions struct {
