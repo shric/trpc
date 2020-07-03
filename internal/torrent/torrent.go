@@ -157,11 +157,15 @@ func (torrent Torrent) trackershortname(conf *config.Config) string {
 
 // UpdateTotal updates the Torrent carrying a total sum of torrents.
 func (torrent *Torrent) UpdateTotal(result *Torrent) {
+	size := cunits.ImportInByte(torrent.original.SizeWhenDone.Byte() + result.SizeWhenDone.Byte())
+	left := *torrent.original.LeftUntilDone + *result.original.LeftUntilDone
+	torrent.original.SizeWhenDone = &size
+	torrent.original.LeftUntilDone = &left
 	torrent.up += result.up
 	torrent.down += result.down
 	torrent.SizeWhenDone += result.SizeWhenDone
 	torrent.LeftUntilDone += result.LeftUntilDone
-	torrent.Percent = Progress(result.original)
+	torrent.Percent = Progress(torrent.original)
 	torrent.Up = fmt.Sprintf("%7.1f", torrent.up/float64(KiB))
 	torrent.Down = fmt.Sprintf("%7.1f", torrent.down/float64(KiB))
 	torrent.UploadedEver += result.UploadedEver
@@ -174,8 +178,18 @@ func (torrent *Torrent) UpdateTotal(result *Torrent) {
 
 // NewForTotal returns a Torrent used to store the totals.
 func NewForTotal() *Torrent {
+	leftUntilDone := int64(0)
+	reCheckProgress := float64(0)
+	sizeWhenDone := cunits.ImportInByte(0)
+
+	t := transmissionrpc.Torrent{
+		LeftUntilDone:   &leftUntilDone,
+		RecheckProgress: &reCheckProgress,
+		SizeWhenDone:    &sizeWhenDone,
+	}
 	torrent := &Torrent{
-		Error: " ",
+		Error:    " ",
+		original: &t,
 	}
 
 	return torrent
