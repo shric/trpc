@@ -51,6 +51,14 @@ func torrentFset(c *Command, files map[int64][]int64) {
 				return
 			}
 		}
+
+		torrents, err := c.Client.TorrentGet(append(commonArgs[:], "files", "priorities", "wanted"), IDs)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			return
+		}
+
+		fmt.Println(fileInfo(torrents[0]))
 	}
 }
 
