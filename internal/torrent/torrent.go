@@ -113,23 +113,34 @@ func Age(t *transmissionrpc.Torrent) int64 {
 	return now - lastActivity
 }
 
-// Priority returns the priority of a torrent (low, medium, high).
-func Priority(t *transmissionrpc.Torrent) string {
+func priorityString(priority int64) string {
 	priorities := []string{"low", "normal", "high"}
 	// We add one because
 	// https://github.com/transmission/transmission/blob/master/libtransmission/transmission.h
 	//     TR_PRI_LOW = -1,
 	//     TR_PRI_NORMAL = 0, /* since NORMAL is 0, memset initializes nicely */
 	//     TR_PRI_HIGH = 1
-	return priorities[*t.BandwidthPriority+1]
+	return priorities[priority+1]
+}
+
+// FilePriority returns the priority of a torrent file (low, medium, high).
+func FilePriority(t *transmissionrpc.Torrent, id int64) string {
+	return priorityString(t.Priorities[id])
+}
+
+// Priority returns the priority of a torrent (low, medium, high).
+func Priority(t *transmissionrpc.Torrent) string {
+	return priorityString(*t.BandwidthPriority)
 }
 
 // TrackerShortName returns the configured short name of a torrent.
 func TrackerShortName(torrent *transmissionrpc.Torrent, conf *config.Config) string {
-	for _, url := range torrent.Trackers {
-		for match, shortname := range conf.Trackernames {
-			if strings.Contains(url.Announce, match) {
-				return shortname
+	if conf != nil {
+		for _, url := range torrent.Trackers {
+			for match, shortname := range conf.Trackernames {
+				if strings.Contains(url.Announce, match) {
+					return shortname
+				}
 			}
 		}
 	}
@@ -173,6 +184,7 @@ func (torrent *Torrent) UpdateTotal(result *Torrent) {
 
 	torrent.Size, torrent.SizeSuffix = torrent.SizeWhenDone.GetHumanSizeAndSuffix()
 	torrent.SizeSuffix = strings.Replace(torrent.SizeSuffix, "i", "", 1)
+
 	if torrent.LeftUntilDone != 0 && torrent.down != 0 {
 		torrent.Eta = etastr(torrent.LeftUntilDone / int64(torrent.down))
 	}
