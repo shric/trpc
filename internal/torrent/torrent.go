@@ -123,6 +123,18 @@ func priorityString(priority int64) string {
 	return priorities[priority+1]
 }
 
+// FileProgress returns the progress of a torrent file ([0.0..1.0]).
+func FileProgress(t *transmissionrpc.Torrent, id int64) float64 {
+	bytesCompleted := t.Files[id].BytesCompleted
+
+	length := t.Files[id].Length
+	if length == 0 {
+		return 0
+	}
+
+	return float64(bytesCompleted) / float64(length)
+}
+
 // FilePriority returns the priority of a torrent file (low, medium, high).
 func FilePriority(t *transmissionrpc.Torrent, id int64) string {
 	return priorityString(t.Priorities[id])
