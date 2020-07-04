@@ -36,6 +36,7 @@ type options struct {
 	Errors  errorsOptions `command:"errors" alias:"e" description:"Show torrent error strings"`
 	Files   filesOptions  `command:"files" alias:"f" description:"Show file info for torrents"`
 	Fset    fsetOptions   `command:"fset" alias:"f" description:"Set file priority/get status"`
+	Info    infoOptions   `command:"info" alias:"i" description:"Show torrent or session info"`
 	List    listOptions   `command:"list" alias:"l" description:"List torrents"`
 	Move    moveOptions   `command:"move" alias:"mv" description:"Move torrent to another location"`
 	Rename  renameOptions `command:"rename" description:"Rename torrent file"`
@@ -87,6 +88,7 @@ func Run() {
 		"errors":  {Runner: Errors, Options: args.Errors},
 		"files":   {Runner: Files, Options: args.Files},
 		"fset":    {Runner: Fset, Options: args.Fset},
+		"info":    {Runner: Info, Options: args.Info},
 		"list":    {Runner: List, Options: args.List},
 		"move":    {Runner: Move, Options: args.Move},
 		"rename":  {Runner: Rename, Options: args.Rename},
