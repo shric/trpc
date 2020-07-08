@@ -180,10 +180,8 @@ func (torrent Torrent) trackershortname(conf *config.Config) string {
 
 // UpdateTotal updates the Torrent carrying a total sum of torrents.
 func (torrent *Torrent) UpdateTotal(result *Torrent) {
-	size := cunits.ImportInByte(torrent.original.SizeWhenDone.Byte() + result.SizeWhenDone.Byte())
-	left := *torrent.original.LeftUntilDone + *result.original.LeftUntilDone
-	torrent.original.SizeWhenDone = &size
-	torrent.original.LeftUntilDone = &left
+	*torrent.original.SizeWhenDone += result.SizeWhenDone
+	*torrent.original.LeftUntilDone += result.LeftUntilDone
 	torrent.up += result.up
 	torrent.down += result.down
 	torrent.SizeWhenDone += result.SizeWhenDone
