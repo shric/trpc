@@ -13,7 +13,7 @@ type infoOptions struct {
 	filter.Options `group:"filters"`
 }
 
-// Files provides a list of files for all or selected torrents.
+// Info provides a list of files for all or selected torrents.
 func Info(c *Command) {
 	opts, ok := c.Options.(infoOptions)
 	optionsCheck(ok)
