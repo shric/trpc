@@ -113,7 +113,10 @@ func (f *Instance) envForTorrent(t *transmissionrpc.Torrent) *object.Environment
 	env.Set("age", &object.Integer{Value: torrent.Age(t)})
 	env.Set("downloadDir", &object.String{Value: *t.DownloadDir})
 	env.Set("priority", &object.String{Value: torrent.Priority(t)})
-	env.Set("status", &object.String{Value: torrent.Status(t)})
+
+	status, _ := torrent.Status(t)
+
+	env.Set("status", &object.String{Value: status})
 	env.Set("name", &object.String{Value: *t.Name})
 
 	if *t.Error != 0 {

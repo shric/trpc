@@ -69,7 +69,7 @@ var commonArgs = [...]string{
 	"rateUpload", "eta", "id", "leftUntilDone", "recheckProgress", "error",
 	"rateDownload", "status", "trackers", "bandwidthPriority", "uploadedEver",
 	"downloadDir", "addedDate", "doneDate", "startDate", "isFinished",
-	"errorString",
+	"errorString", "peersGettingFromUs", "peersSendingToUs",
 }
 
 // Run parses flags.

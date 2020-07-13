@@ -36,21 +36,46 @@ const (
 )
 
 // Status returns the status of a torrent.
-func Status(torrent *transmissionrpc.Torrent) string {
-	statusStrings := map[transmissionrpc.TorrentStatus]string{
-		transmissionrpc.TorrentStatusStopped:      "Stopped",
-		transmissionrpc.TorrentStatusCheckWait:    "To Hash",
-		transmissionrpc.TorrentStatusCheck:        "Hashing",
-		transmissionrpc.TorrentStatusDownloadWait: "Queued",
-		transmissionrpc.TorrentStatusSeedWait:     "Queued",
-		transmissionrpc.TorrentStatusIsolated:     "No peers",
+func Status(torrent *transmissionrpc.Torrent) (status string, showInUpDown bool) {
+	switch *torrent.Status {
+	case transmissionrpc.TorrentStatusDownloadWait, transmissionrpc.TorrentStatusSeedWait:
+		return "Queued", true
+	case transmissionrpc.TorrentStatusStopped:
+		if *torrent.IsFinished {
+			return "Finished", true
+		}
+
+		return "Stopped", true
+	case transmissionrpc.TorrentStatusCheckWait:
+		return "To Hash", true
+	case transmissionrpc.TorrentStatusCheck:
+		return "Hashing", true
+	case transmissionrpc.TorrentStatusIsolated:
+		return "No peers", true
+	case transmissionrpc.TorrentStatusSeed, transmissionrpc.TorrentStatusDownload:
+		fromUs := *torrent.PeersGettingFromUs
+		toUs := *torrent.PeersSendingToUs
+
+		if fromUs != 0 && toUs != 0 {
+			return "Up & Down", false
+		}
+
+		if toUs != 0 {
+			return "Downloading", false
+		}
+
+		if fromUs != 0 {
+			if *torrent.LeftUntilDone > 0 {
+				return "Uploading", false
+			}
+
+			return "Seeding", false
+		}
+
+		return "Idle", false
 	}
 
-	if val, ok := statusStrings[*torrent.Status]; ok {
-		return val
-	}
-
-	return ""
+	return "", false
 }
 
 func etastr(eta int64) string {
@@ -250,8 +275,8 @@ func NewFrom(transmissionrpcTorrent *transmissionrpc.Torrent, conf *config.Confi
 	torrent.Priority = Priority(torrent.original)
 	torrent.Trackershortname = torrent.trackershortname(conf)
 
-	status := Status(torrent.original)
-	if status != "" {
+	status, showInUpDown := Status(torrent.original)
+	if showInUpDown {
 		torrent.Up = status
 		torrent.Down = status
 	}
