@@ -24,7 +24,7 @@ func fileInfo(t *transmissionrpc.Torrent) string {
 
 	s = pyfmt.Must("{ID}: {Name}:\n", result)
 	formatString := "%3s: %4s %-8s %3s %10s  %s"
-	s += fmt.Sprintf(formatString,
+	s += fmt.Sprintf(formatString+"\n",
 		"#", "Done", "Priority", "Get", "Size", "Name")
 
 	for i, f := range t.Files {
