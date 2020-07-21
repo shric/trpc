@@ -17,6 +17,7 @@ func makeTorrent(sizeWhenDone cunits.Bits, eta int64, recheckProgress float64, l
 ) *torrent.Torrent {
 	ID := int64(1)
 	Name := "Torrent 1"
+	IsFinished := false
 	RateUpload := int64(0)
 	RateDownload := int64(0)
 	BandwidthPriority := int64(0)
@@ -30,6 +31,7 @@ func makeTorrent(sizeWhenDone cunits.Bits, eta int64, recheckProgress float64, l
 		Name:              &Name,
 		Error:             &error,
 		Eta:               &eta,
+		IsFinished:        &IsFinished,
 		RateUpload:        &RateUpload,
 		RateDownload:      &RateDownload,
 		RecheckProgress:   &recheckProgress,
